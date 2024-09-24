@@ -1,0 +1,15 @@
+/lambda/
+/scripts
+public
+dist
+mock
+src/assets/*
+src/assets/*.*
+src/assets/icon/demo_index.html
+.src/assets/icons/demo_index.html
+src/utils
+src/main.js
+.vite.config.js
+.editorconfig
+components.d.ts
+auto-imports.d.ts

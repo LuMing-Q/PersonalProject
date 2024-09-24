@@ -1,0 +1,15 @@
+server:
+  port: 2693 # 端口号
+  servlet:
+    context-path: /qkj  #统一接口前缀
+    session: # session 超时时间
+      timeout: 7200
+
+spring:
+  application:
+    name: qkj_project
+  profiles:
+    active: dev
+
+mybatis:
+  mapper-locations: classpath:/mapper/*Mapper.xml

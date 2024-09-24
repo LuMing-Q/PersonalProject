@@ -1,0 +1,113 @@
+// 详情样式
+.detailPaddingWrap{
+	padding: 20px;
+	height: 100%;
+	overflow-y: auto;
+}
+.detailWrap{
+	// 20px的下边距
+	.mb-20{
+		margin-bottom: 20px;
+	}
+	// 2个盒子布局（有中边距）
+	.dsf2{
+		display: flex;
+		flex-wrap: wrap;
+		& > div{
+			width: calc(~"(100% - 20px) / 2");
+			margin-bottom: 20px;
+			&:nth-child(even){
+				margin-left: 20px;
+			}
+		}
+	}
+	// 3个盒子布局（有中边距）
+	.dsf3{
+		display: flex;
+		// justify-content: space-between;
+		flex-wrap: wrap;
+		& > div{
+			// flex-shrink: 0;
+			width: calc(~"(100% - (2 * 20px)) / 3");
+			&:nth-child(3n-1){
+				margin: 0 20px;
+			}
+		}
+	}
+
+	h3{
+		position: relative;
+		padding-left: 13px;
+		margin: 15px 0;
+		font-size: 14px;
+		font-weight: 700;
+		color: #30333A;
+
+		&::before{
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 4px;
+			width: 4px;
+			height: 18px;
+			background: #3E7EE8;
+			border-radius: 2px;
+		}
+	}
+
+	.cardBox{
+		padding: 30px 30px 10px;
+		background: #fff;
+		border-radius: 4px;
+	}
+
+	.el-col-12:nth-child(odd){
+		padding-right: 40px;
+	}
+	.el-col-12:nth-child(even){
+		padding-left: 40px;
+	}
+
+	el-col-8:nth-child(3n-2){
+		padding-right: 50px;
+	}
+	.el-col-8:nth-child(3n-1){
+		padding-right: 50px;
+		padding-left: 50px;
+	}
+	.el-col-8:nth-child(3n){
+		padding-left: 50px;
+	}
+
+
+	.el-col{
+		display: flex;
+		justify-content: flex-start;
+		margin-bottom: 20px;
+
+		& > div{
+			flex-shrink: 0;
+			line-height: 24px;
+			font-size: 14px;
+			font-weight: 400;
+		}
+		.labelWrap{
+			position: relative;
+			margin-right: 20px;
+			padding-right: 10px;
+			width: 100px;
+			text-align: right;
+			color: #5A5A5A;
+			&::after{
+				content: ':';
+				position: absolute;
+				right: 0;
+				margin-top: 2px;
+			}
+		}
+		.valueWrap{
+			flex: 1;
+			color: #30333A;
+		}
+	}
+}

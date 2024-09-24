@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qkj.project.dao.RoleDao">
+    <resultMap id="BaseRole" type="com.qkj.project.entity.Role">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="addRole">
+        insert into `t_role`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">`id`,</if>
+            <if test="name != null and name != ''">`name`,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="code != null and code != ''">`code`,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">#{id},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="code != null and code != ''">#{code},</if>
+        </trim>
+    </insert>
+
+    <update id="updateRole">
+        update t_role
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="code != null and code != ''">`code` = #{code},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRole">
+        delete from t_role where `id` = #{roleId}
+    </delete>
+
+    <select id="selectRoleById" resultMap="BaseRole">
+        SELECT * FROM t_role WHERE `id` = #{id};
+    </select>
+
+    <select id="getRoles" resultMap="BaseRole">
+        SELECT * FROM t_role
+        <where>
+            <if test="name != null and name != '' ">
+                `name` LIKE CONCAT (#{name},'%')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{page},#{size}
+    </select>
+
+    <select id="getRoleTotal" resultType="java.lang.Integer">
+        select count(*) from t_role
+        <where>
+            <if test="name != null and name != '' ">
+                `name` LIKE CONCAT (#{name},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

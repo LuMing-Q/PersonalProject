@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qkj.project.dao.OptionLogDao">
+    <resultMap id="BaseOptionLog" type="com.qkj.project.entity.OptionLog">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="operate" property="operate"/>
+        <result column="status" property="status"/>
+        <result column="relation" property="relation"/>
+        <result column="path" property="path"/>
+        <result column="param" property="param"/>
+        <result column="result" property="result"/>
+        <result column="wrong" property="wrong"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="upsert" parameterType="com.qkj.project.entity.OptionLog">
+        INSERT INTO "t_option_log" (`id`, `user_id`, `user_name`, `operate`, `status`, `relation`, `path`, `param`, `result`, `wrong`)
+        VALUES (#{id}, #{userId}, #{userName}, #{operate}, #{status}, #{relation}, #{path}, #{param}, #{result}, #{wrong})
+        ON DUPLICATE (`id`)  UPDATE SET `status` = #{status}, `result` = #{result}, `wrong` = #{wrong}
+    </insert>
+
+    <select id="selectCount" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM t_option_log
+        <where>
+            <if test="status != 0">AND `status` = #{status}</if>
+            <if test="operate != null and operate != ''">AND `operate` = #{operate}</if>
+        </where>
+    </select>
+
+    <select id="selectLimit" resultMap="BaseOptionLog">
+        SELECT * FROM t_option_log
+        <where>
+            <if test="status != 0">AND `status` = #{status}</if>
+            <if test="operate != null and operate != ''">AND `operate` = #{operate}</if>
+        </where>
+        ORDER BY `create_time` DESC
+        LIMIT #{page},#{size}
+    </select>
+
+    <select id="selectById" resultMap="BaseOptionLog"> SELECT * FROM `t_option_log` WHERE "id" = #{id} </select>
+
+    <select id="operateOption" resultType="java.lang.String">
+        SELECT DISTINCT `operate` from  `t_option_log`
+    </select>
+</mapper>

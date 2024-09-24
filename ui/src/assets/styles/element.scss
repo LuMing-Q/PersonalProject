@@ -1,0 +1,42 @@
+/* 只需要重写你需要的即可 */
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  // 基本色
+  $colors: (
+    'primary': (
+      'base': #516FE6, // 主色
+    ),
+  ),
+  // 菜单
+  $menu: (
+    'border-color': #17263A,
+  ),
+  // 按钮
+  $button: (
+    'font-weight': normal,
+    'border-color': #CECED6,
+    'text-color': #3E3E3E,
+  ),
+  // 文本框
+  $input: (
+    'border-color': #CECED6,
+    'border-radius': 3px,
+    'placeholder-color': #CECED6,
+  ),
+  // 表格
+  $table: (
+    'border-color': #E8E8E8,
+    'header-bg-color': #F2F7FA,
+    'header-text-color': #78769B,
+    'text-color': #3E3E3E,
+  ),
+  $table-padding: (
+    'default': 4px 0,
+  ),
+);
+
+:root {
+  --el-fill-color-lighter: #F9FBFF;
+}
+
+// 如果你想导入所有样式:
+//@use "element-plus/theme-chalk/src/index.scss" as *;

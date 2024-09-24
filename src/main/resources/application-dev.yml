@@ -1,0 +1,54 @@
+spring:
+  mvc:
+    static-path-pattern: /static/**
+  servlet:
+    multipart:
+      max-file-size: 2048MB
+      max-request-size: 2048MB
+      enabled: true
+      file-size-threshold: 0
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/qkj_project?useUnicode = true&characterEncoding = utf8&useSSL = false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+
+logging:
+  level:
+    com.qkj.project: DEBUG # 返回日志级别
+
+# 路径拦截
+auth:
+  # 不需要 token 校验的接口
+  ignoreUrls: '/qkj/login,/qkj/file/file_content,/qkj/file/url'
+  # token 以参数的方式传递到后端的接口 eg: 文件上传、文件下载
+  queryUrls: ''
+  public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI71DbL/2sMTAmP22jdlhhU9TiVHjWr3I/kDTX821puYX5Q6nkb9bcTi3KjIMczTbSw4Lnem0flidzBtene+ltUCAwEAAQ==
+  private-key: MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAjvUNsv/awxMCY/baN2WGFT1OJUeNavcj+QNNfzbWm5hflDqeRv1txOLcqMgxzNNtLDgud6bR+WJ3MG16d76W1QIDAQABAkBbXwWCg0WvqVa9zelrvtgUezqXWURqOcwkPJgr10ET8Ttp3ivS0eVQJKsiw2L44tpik3dRexas5JvJXeG63XgBAiEAxu/cvaBQmiG1M+FO/Nn4fZSuCJRkLvD27azvVLeIdOUCIQC39ouCFlvovxVwBMsdgM2E+T1TnuTozWMTG+E7surrMQIgVipab//aKYhkFd6G+dnnWW1mm+y6H+La8UMwPn9oKUkCIHLFLx5Wwrp/VGmRpALhE9dtA9TCof+X+8K1Nxzer+9RAiBPXK5Qeqa64m0qBGdl+P+FETWVqm6hxez9Fxp/iLo+Jw==
+  type: jwt # 现有 1-jwt:通过 jwt 生成 token, 2-redis: 通过 redis 存储 token
+  login-expire-time: 3600 # redis 过期时间
+
+# 对象存储，即附件存储，使用S3协议配置内容，限免配置只是占位测试
+unify:
+  minio:
+    endpoint: http://13.11.100.52:31506 # 易智瑞
+    accessKey: minioadmin
+    secretKey: Gistack@2024
+    bucketName: aggregation-source-data
+  minio-oa:
+    endpoint: http://13.11.102.254:6188  # 附件存储
+    accessKey: yIi2K47J0Blpgz7xLQE0
+    secretKey: MPGGpvUVIwhDvwqmbD7HV70pxUS2YY4SgVcCLwvw
+    bucketName: sharex-dev
+
+# 异步任务线程池配置
+task:
+  pool:
+    corePoolSize: 10
+    maxPoolSize: 20
+    keepAliveSeconds: 300
+    queueCapacity: 50
