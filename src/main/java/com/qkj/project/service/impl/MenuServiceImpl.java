@@ -39,7 +39,6 @@ public class MenuServiceImpl implements MenuService {
     }
 
     /**
-     * <img src="https://pic.imgdb.cn/item/66e52acad9c307b7e9ada728.webp">
      * @param name
      * @param page
      * @param size

@@ -26,7 +26,7 @@ public interface OptionLogDao {
      * @param operate
      * @return
      */
-    long selectCount(@Param("status") int status, @Param("operate") String operate);
+    long selectCount(@Param("status") Integer status, @Param("operate") String operate);
 
     /**
      * 分页查询
@@ -36,7 +36,7 @@ public interface OptionLogDao {
      * @param size
      * @return
      */
-    List<OptionLog> selectLimit(@Param("status") int status, @Param("operate") String operate, @Param("page") int page, @Param("size") int size);
+    List<OptionLog> selectLimit(@Param("status") Integer status, @Param("operate") String operate, @Param("page") int page, @Param("size") int size);
 
     /**
      * 详情查看

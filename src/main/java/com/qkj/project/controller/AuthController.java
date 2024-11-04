@@ -1,11 +1,13 @@
 package com.qkj.project.controller;
 
 import com.qkj.project.common.Online;
-import com.qkj.project.common.enumerations.StatusCode;
-import com.qkj.project.common.exception.BusinessException;
+import com.qkj.project.common.RequestHolder;
+import com.qkj.project.common.annotations.ULog;
+import com.qkj.project.entity.User;
 import com.qkj.project.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +37,13 @@ public class AuthController {
         return authServiceMap.get(authType).login(params);
     }
 
+    @ULog("获取当前登录用户信息")
+    @GetMapping("/login_user")
+    public User getLoginUser() {
+        return RequestHolder.get().getUser();
+    }
+
+    @ULog("退出登录")
     @PostMapping("/logout")
     public String login() {
         authServiceMap.get(authType).logout();

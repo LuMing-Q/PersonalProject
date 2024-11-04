@@ -34,3 +34,4 @@ build/
 
 ### 前端依赖文件 node_modules ###
 ui/node_modules/
+logs

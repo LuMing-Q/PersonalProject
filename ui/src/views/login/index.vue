@@ -93,9 +93,9 @@ onUnmounted(()=> {
 .wrap{
 	height: 100vh;
 	min-height: 520px;
-	// background-image: url(../../assets/AdminIcon/loginBack1.png);
+  //background-image: url(@/assets/images/bg.jpg);
 	background-repeat: no-repeat;
-	// background-position: center;
+  background-position: center;
 	background-size: auto 100%;
 	background-color: #000;
 	overflow: hidden;

@@ -26,8 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -71,13 +73,28 @@ public class LogAspect {
         }
         if (!"GET".equals(request.getMethod())) {
             for (Object o : joinPoint.getArgs()) {
-                if (Objects.isNull(o) || o instanceof MultipartFile || o instanceof MultipartFile[] || o instanceof HttpServletRequest || o instanceof HttpServletResponse) {
+                if (Objects.isNull(o) || o instanceof MultipartFile || o instanceof MultipartFile[]
+                        || o instanceof HttpServletRequest || o instanceof HttpServletResponse) {
                     continue;
+                }
+                if (o instanceof Map<?, ?>) {
+                    Map<?, ?> map = (Map<?, ?>) o;
+                    // 进一步检查Map的值是否是MultipartFile类型
+                    if (map.values().stream().allMatch(MultipartFile.class::isInstance)) {
+                        // 数据处理
+//                        for (Object key : map.keySet()) {
+//                            Map<Object, String> outMap = new HashMap<>();
+//                            outMap.put(key, "二进制文件");
+//                            ars.add(outMap);
+//                        }
+                        // 不做处理
+                        continue;
+                    }
                 }
                 ars.add(o);
             }
         }
-        log.info("|====> ip: {} {} {} body = {}", ip, request.getMethod(), uri + "?" + query, new JsonMapper().writeValueAsString(ars));
+        log.info("|====> ip: {} {} {} body = {}", ip, request.getMethod(), BaseUtil.isEmpty(query) ? uri : uri + "?" + query, new JsonMapper().writeValueAsString(ars));
     }
 
     /**
@@ -94,7 +111,10 @@ public class LogAspect {
         OptionLog log = new OptionLog();
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null || value == null || value.getUser() == null
-                || BaseUtil.isEmpty(value.getUser().getId())) { return point.proceed(); }
+                || BaseUtil.isEmpty(value.getUser().getId())) {
+            // 继续执行被通知的方法
+            return point.proceed();
+        }
         HttpServletRequest request = attributes.getRequest();
         String path = request.getRequestURI();
         Object[] parameters = point.getArgs();
@@ -106,6 +126,7 @@ public class LogAspect {
         log.setRelation(BaseUtil.sha256(value.getToken()));
         log.setPath(path);
         log.setParam(JSON.toJSONString(Stream.of(parameters).filter(o -> !(o instanceof MultipartFile)).collect(Collectors.toList())));
+        log.setCreateTime(LocalDateTime.now());
         logExecutorService.execute(() -> optionLogDao.upsert(log));
         try {
             Object result = point.proceed();

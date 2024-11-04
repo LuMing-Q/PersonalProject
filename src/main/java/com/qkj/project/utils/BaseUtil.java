@@ -23,41 +23,43 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * 工具类
+ * @author KeJiang Qi
+ * @date 2024/8/20
+ * @description 工具类
  */
 @Slf4j
 public class BaseUtil {
     /**
-     * 获取uuid，去除-，专程小写
-     * @return {@link String} uuid
+     * 获取uuid，去除-，转成小写
+     * @return uuid
      */
     public static String uuid() {
         return UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
     }
 
     /**
-     * 判断str是否为null或者是空字符串
+     * 判断 str 是否为 null 或者是空字符串
      * @param str 判断对象
-     * @return {@link Boolean} 判断结果 null 或者 ""的时候返回true 否则返回false
+     * @return 判断结果 null 或者 ""的时候返回 true 否则返回 false
      */
     public static boolean isEmpty(String str) {
         return str == null || "".equals(str);
     }
 
     /**
-     * 判断str是否不为null或者不是空字符串
+     * 判断str是否不为 null 或者不是空字符串
      * @param str 判断对象
-     * @return {@link Boolean} 判断结果 null 或者 ""的时候返回false 否则返回true
+     * @return 判断结果 null 或者 ""的时候返回 false 否则返回 true
      */
     public static boolean nonEmpty(String str) {
         return !isEmpty(str);
     }
 
     /**
-     * 做参数转化，Map格式的参数转化成字符串参数
+     * 做参数转化，Map格式的参数转化成字符串参数 ===> 用于外部请求 query 参数构建
      * <p>例如 {"a":"b","c":"d"} 转成 a=b&c=d</p>
      * @param json 参数
-     * @return {@link String} 字符串参数
+     * @return 字符串参数
      */
     public static String paramsConversion(Map<String, Object> json) {
         return json.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
@@ -68,7 +70,7 @@ public class BaseUtil {
      * 反序列化成 {JSONObject} 对象
      * 如果参数为空，则返回空对象{}
      * @param str json字符串
-     * @return {@link JSONObject}
+     * @return
      */
     public static JSONObject parseJson(String str) {
         return isEmpty(str) ? new JSONObject() : JSON.parseObject(str);
@@ -77,7 +79,7 @@ public class BaseUtil {
     /**
      * 生成JSONArray并且加入元素e
      * @param e 元素
-     * @return {@link JSONArray} 生成的数组
+     * @return
      */
     public static JSONArray as(Object... e) {
         JSONArray j = new JSONArray();
@@ -166,6 +168,9 @@ public class BaseUtil {
 
     /**
      * AES解密
+     * @param str
+     * @param key
+     * @return
      */
     public static String aesDecrypt(String str, String key) {
         try {
@@ -185,7 +190,7 @@ public class BaseUtil {
     /**
      * 计算SHA256加密值
      * @param src 原文
-     * @return {@link String} 密文
+     * @return 密文
      */
     public static String sha256(String src) {
         if (isEmpty(src)) { return ""; }

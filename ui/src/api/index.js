@@ -118,16 +118,3 @@ export const uploadModify = (url = '', params = {}, values = {}) => request({
 	data: values,
 	isUpload: true,
 });
-
-/**
- * 查询附件
- * @param {*} values 请求体
- * @param {*} params 请求参数
- * @returns response
- */
-export const getUploadFiles = (params = {}, values = {}) => request({
-	url: 'attach/query',
-	method: 'POST',
-	params: { ...params, ...{ isHideMessage: true } }, // 隐藏消息提示
-	data: values,
-});

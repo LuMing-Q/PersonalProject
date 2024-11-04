@@ -67,7 +67,8 @@ public class BaseConfig {
     }
 
     /**
-     * 日志生成(日志收集)执行器
+     * 日志生成线程池<br>
+     * <img src="https://pic.imgdb.cn/item/67243c68d29ded1a8ce6fab9.png">
      * @return
      */
     @Bean("logExecutorService")
