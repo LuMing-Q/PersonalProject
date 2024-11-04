@@ -19,5 +19,11 @@ public interface FileService {
      */
     String complexFileUpload(Map<String, Object> request);
 
+    /**
+     * 文件上传
+     * @param file
+     * @param fileName
+     * @param response
+     */
     void upload(MultipartFile file, String fileName, HttpServletResponse response);
 }

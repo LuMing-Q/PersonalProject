@@ -52,7 +52,6 @@ public class MenuServiceImpl implements MenuService {
     }
 
     /**
-     * <img src="https://pic.imgdb.cn/item/66e532e4d9c307b7e9b46b52.jpg" alt="8d362d1d75ff78c872e71e22e00ee4dc.jpg">
      * @param menuId
      * @return
      */

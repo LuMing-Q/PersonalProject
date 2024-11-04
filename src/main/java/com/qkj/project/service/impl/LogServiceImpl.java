@@ -3,7 +3,8 @@ package com.qkj.project.service.impl;
 import com.qkj.project.common.Page;
 import com.qkj.project.dao.OptionLogDao;
 import com.qkj.project.entity.OptionLog;
-import com.qkj.project.service.OptionLogService;
+import com.qkj.project.service.LogService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -14,13 +15,14 @@ import java.util.List;
  * @date 2024/8/20 - 15:18
  * @description
  */
-public class OptionLogServiceImpl implements OptionLogService {
+@Service
+public class LogServiceImpl implements LogService {
 
     @Resource
     private OptionLogDao optionLogDao;
 
     @Override
-    public Page<OptionLog> logsPage(int status, String operate, int page, int size) {
+    public Page<OptionLog> logPage(Integer status, String operate, int page, int size) {
         long total = optionLogDao.selectCount(status, operate);
         if (total <= 0) { return Page.of(total, page, new ArrayList<>()); }
         List<OptionLog> logs = optionLogDao.selectLimit(status, operate, (page - 1) * size, size);
@@ -28,7 +30,7 @@ public class OptionLogServiceImpl implements OptionLogService {
     }
 
     @Override
-    public OptionLog log(String id) {
+    public OptionLog logDetail(String id) {
         return optionLogDao.selectById(id);
     }
 
