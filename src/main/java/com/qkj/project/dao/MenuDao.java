@@ -43,9 +43,28 @@ public interface MenuDao {
      */
     Integer addMenu(Menu menu);
 
+    /**
+     * 根据 name 筛选菜单数量
+     * @param name
+     * @return
+     */
     int getCount(@Param("name") String name);
 
+    /**
+     * 根据 name 筛选分页菜单列表
+     * @param name
+     * @param page
+     * @param size
+     * @return
+     */
     List<Menu> getList(@Param("name") String name, @Param("page") int page, @Param("size") int size);
 
+    /**
+     * 根据 id 删除菜单
+     * @param menuId
+     * @return
+     */
     Integer deleteMenuByMenuId(@Param("menuId") String menuId);
+
+    int editMenu(Menu menu);
 }

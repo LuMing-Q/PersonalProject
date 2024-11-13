@@ -3,6 +3,7 @@ package com.qkj.project.controller;
 import com.qkj.project.common.Page;
 import com.qkj.project.entity.Role;
 import com.qkj.project.service.RoleService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,5 +25,10 @@ public class RoleController {
                                   @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                   @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         return roleService.getRolePage(name, page, size);
+    }
+
+    @PostMapping("/add")
+    public int addRole(@Validated @RequestBody Role role) {
+        return roleService.addRole(role);
     }
 }

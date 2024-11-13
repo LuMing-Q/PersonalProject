@@ -4,7 +4,7 @@
       <el-sub-menu v-if="menu.children && menu.children.length > 0" :key="`${menu.id}sub`" :index="menu.path || menu.id">
         <template #title>
           <div class="menuName">
-            <bz-icon v-if="menu.icon" :name="menu.icon" color="#fff"  class="iconSize16 icon-box" />
+            <Icon v-if="menu.icon" :name="menu.icon" color="#fff"  class="iconSize16 icon-box" />
             {{ menu.name }}
           </div>
         </template>
@@ -15,7 +15,7 @@
       <el-menu-item v-else :key="`${menu.id}menu`" :index="menu.path">
         <template #title>
           <div class="menuName">
-            <bz-icon v-if="menu.icon" :name="menu.icon" color="#fff" class="iconSize16 icon-box" />
+            <Icon v-if="menu.icon" :name="menu.icon" color="#fff" class="iconSize16 icon-box" />
             {{ menu.name }}
           </div>
         </template>
@@ -104,7 +104,7 @@ watch(() => router.currentRoute.value.path, (val) => {
 
   .menuName {
     color: #fff;
-    background-color: #3e7ee8;
+    background-color: #2196f3;
   }
 }
 
@@ -135,7 +135,7 @@ watch(() => router.currentRoute.value.path, (val) => {
   border: none;
   .menuName {
     color: #fff;
-    background-color: #3e7ee8;
+    background-color: #2196f3;
   }
 }
 

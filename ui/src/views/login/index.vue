@@ -1,36 +1,42 @@
 <template>
   <div class=wrap>
-		<h3> {{ siteName }} </h3>
-    <div class="form">
-			<el-form
-					ref="formRef"
-					:model="form"
-					:hide-required-asterisk="true"
-					:rules="rules"
-					status-icon>
-				<h4>登录</h4>
-				<el-form-item label="用户名" prop="username">
-					<el-input v-model="form.username" placeholder="请输用户名"/>
-				</el-form-item>
-				<el-form-item label="密码" prop="password">
-					<el-input v-model="form.password" type="password" autocomplete="off" placeholder="请输入密码" />
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" :disabled="isDisabledSubmit" @click="submit(formRef)">登录</el-button>
-				</el-form-item>
-			</el-form>
-		</div>
-		<div class="siteInformation">
-			<p>{{ siteInformation }}</p>
+    <div class="container">
+			<div class="drop">
+				<div class="content">
+					<h2>登 录</h2>
+					<el-form
+						ref="formRef"
+						:model="form"
+						:hide-required-asterisk="true"
+						:label-width="autoSize(55)"
+						:rules="rules"
+						status-icon
+						class="form-style">
+						<el-form-item label="用户名" prop="username" class="inputBox">
+							<el-input v-model="form.username" placeholder="请输用户名"/>
+						</el-form-item>
+						<el-form-item label="密码" prop="password" class="inputBox">
+							<el-input v-model="form.password" type="password" show-password autocomplete="off" placeholder="请输入密码" />
+						</el-form-item>
+						<div class="btn-box">
+							<el-button type="primary" :disabled="isDisabledSubmit" class="btn" @click="submit(formRef)">
+								登录
+							</el-button>
+						</div>
+					</el-form>
+				</div>
+			</div>
+			<!-- <a href="#" class="btns">忘记密码</a>
+			<a href="#" class="btns signup">注册</a> -->
 		</div>
   </div>
 </template>
 
 <script setup name="InteriorLogin">
-import { reactive, ref, getCurrentInstance, onMounted, onUnmounted } from 'vue';
+import { reactive, ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { userLogin, getUserMenuList } from '@/api/platform/userInfo';
-import { session, buildTree } from '@/utils';
+import { session, autoSize } from '@/utils';
 
 const isDisabledSubmit = ref(false); // 登录按钮是否可用
 const formRef = ref();
@@ -52,8 +58,10 @@ const submit = (formEle) => {
 	if (!formEle) return;
 	formEle.validate(async (valid) => {
 		if (valid) {
+			isDisabledSubmit.value = true;
 			let res = await userLogin(form.value);
 			if (res.code && res.code === 200) {
+				isDisabledSubmit.value = false;
 				session.setStorage('token', res.data.token);
 				session.setStorage('userInfo', res.data.user);
 				router.push('/');
@@ -73,13 +81,7 @@ const keydown = (e) => {
 	}
 };
 
-const siteName = ref('');
-const siteInformation = ref('');
-
 onMounted(() => {
-	const { proxy } = getCurrentInstance();
-	siteName.value = proxy.global.siteName;
-	siteInformation.value = proxy.global.siteInformation;
 	window.addEventListener('keydown', keydown);
 });
 
@@ -90,73 +92,25 @@ onUnmounted(()=> {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/styles/login.less';
 .wrap{
 	height: 100vh;
 	min-height: 520px;
-  //background-image: url(@/assets/images/bg.jpg);
+  background-image: url(@/assets/images/bg.jpg);
 	background-repeat: no-repeat;
   background-position: center;
-	background-size: auto 100%;
-	background-color: #000;
+	background-size: 100% 100%;
+	// background-color: #eff0f4;
 	overflow: hidden;
-	h3 {
-			height: 32px;
-			margin-top: 46px;
-			margin-left: 46px;
-			font-weight: Bold;
-			font-size: 25px;
-			color: #fff;
-			img {
-				vertical-align: middle;
-				margin-right: 30px;
-			}
-		}
-	.form {
-		background-color: #fff;
-		padding: 50px;
-		:deep(.el-input) {
-			width: 285px;
-		}
-		:deep(.el-form-item) {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			align-items:start;
-			height: 60px;
-
-			.el-form-item__label, .el-form-item__content {
-				height: 30px;
-			}
-		}
-		position: absolute;
-		right: 140px;
-		top: 50%;
-		margin-top: -264px;
-
-		h4 {
-			font-weight: 600;
-			font-size: 20px;
-			color: #3E3E3E;
-			margin-bottom: 20px;
-		}
-		:deep(.el-button) {
-			width: 285px;
-			height: 44px;
-			border-radius: 4px;
-			font-weight: 400;
-			font-size: 14px;
-			color: #FFFFFF;
-			border: none;
-			margin-top: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	:deep(.el-input) {
+		.el-input__wrapper {
+			padding: 0;
+			background-color: transparent !important;
+			box-shadow: none;
 		}
 	}
-}
-.siteInformation {
-	position: absolute;
-	left: 57px;
-	bottom: 39px;
-	font-weight: 400;
-	font-size: 14px;
-	color: #FFFFFF;
 }
 </style>

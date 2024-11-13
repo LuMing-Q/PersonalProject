@@ -1,7 +1,7 @@
 <template>
 	<div class="content-manager">
 	<div class="listWrap listWrap-head_height">
-		<bz-table-header :searchConfig="searchConfig" :is-show-create="true" :type="'菜单'" @onSearch="handleSearch" @onCreate="addClick"></bz-table-header>
+		<table-header :searchConfig="searchConfig" :is-show-create="true" :type="'菜单'" @onSearch="handleSearch" @onCreate="addClick" />
 	</div>
 	<div class="listWrap menuListWrap">
 			<el-table 
@@ -16,7 +16,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column label="上级菜单" prop="parentName" show-overflow-tooltip/>
-				<el-table-column label="操作" align="center" :width="echartsFit(280)">
+				<el-table-column label="操作" align="center" :width="autoSize(280)">
 					<template #default="scope">
 						<div style="display: flex;">
 							<el-button type="primary" plain @click="drawerClick(scope.row)">
@@ -45,7 +45,7 @@
 </template>
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import { buildTree, echartsFit } from '@/utils'; // 树形结构被注释
+import { buildTree, autoSize } from '@/utils'; // 树形结构被注释
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getAllList, removeMenu } from '@/api/manager/menu';
 import DetailDialog from './DetailDialog.vue';

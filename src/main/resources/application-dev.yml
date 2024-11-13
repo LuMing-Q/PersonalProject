@@ -24,7 +24,7 @@ logging:
 # 路径拦截
 auth:
   # 不需要 token 校验的接口
-  ignoreUrls: '/qkj/login,/qkj/file/file_content,/qkj/file/url'
+  ignoreUrls: '/qkj/login,/qkj/file/file_content,/qkj/file/url,/qkj/file'
   # token 以参数的方式传递到后端的接口 eg: 文件上传、文件下载
   queryUrls: ''
   public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI71DbL/2sMTAmP22jdlhhU9TiVHjWr3I/kDTX821puYX5Q6nkb9bcTi3KjIMczTbSw4Lnem0flidzBtene+ltUCAwEAAQ==

@@ -51,6 +51,7 @@ public class JwtAuthServiceImpl implements AuthService {
         User user = userService.userCheck(params);
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(BaseUtil.base64decode(privateKey));
         PrivateKey rsa = SecureUtil.generatePrivateKey("RSA", spec);
+        // rs256 加密等级
         JWTSigner signer = JWTSignerUtil.rs256(rsa);
         // 生成JWT Token
         String token = JWT.create()
@@ -59,8 +60,8 @@ public class JwtAuthServiceImpl implements AuthService {
                 .setPayload("email", user.getEmail())
                 .setPayload("phone", user.getPhone())
                 .setIssuedAt(new Date())
-                // 1 hour expiration
-                .setExpiresAt(new Date(System.currentTimeMillis() + 3600000))
+                // 1 hour expiration 60 * 60 * 1000 * 24(一天)
+                .setExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000 * 24))
                 // 使用私钥签名
                 .setSigner(signer)
                 .sign();

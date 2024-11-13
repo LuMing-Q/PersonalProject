@@ -2,7 +2,7 @@ package com.qkj.project.service;
 
 import com.qkj.project.common.Page;
 import com.qkj.project.entity.Menu;
-import com.qkj.project.entity.RoleMenu;
+import com.qkj.project.vo.RoleMenuGrantVO;
 
 import java.util.List;
 
@@ -27,11 +27,18 @@ public interface MenuService {
     int addMenu(Menu menu);
 
     /**
-     * 角色授权
-     * @param list
+     * 编辑菜单
+     * @param menu
      * @return
      */
-    int addRoleMenu(List<RoleMenu> list);
+    int editMenu(Menu menu);
+
+    /**
+     * 角色菜单分配
+     * @param menuGrant
+     * @return
+     */
+    int addRoleMenu(RoleMenuGrantVO menuGrant);
 
     /**
      * 查询菜单分页列表
@@ -48,12 +55,4 @@ public interface MenuService {
      * @return
      */
     int deleteMenuByMenuId(String menuId);
-
-    /**
-     * 根据角色id删除已授权菜单
-     * @param roleId
-     * @return
-     */
-    Integer deleteRoleMenuByRoleId(String roleId);
-
 }

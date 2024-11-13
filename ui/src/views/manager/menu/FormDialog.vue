@@ -6,7 +6,7 @@
 			:model="ruleForm"
 			:rules="rules"
 			label-position="right"
-			:label-width="echartsFit(90)"
+			:label-width="autoSize(90)"
 			class="demo-ruleForm"
 			status-icon
 		>
@@ -70,7 +70,7 @@
 import { ref, defineExpose, defineEmits } from 'vue';
 import { cloneDeep } from 'lodash';
 import { addMenu, editMenu } from '@/api/manager/menu';
-import { echartsFit } from '@/utils';
+import { autoSize } from '@/utils';
 
 const emits = defineEmits(['onRefresh']);
 

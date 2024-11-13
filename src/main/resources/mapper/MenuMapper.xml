@@ -31,6 +31,22 @@
         </foreach>
     </insert>
 
+    <update id="editMenu">
+        update t_menu
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null and parentId != ''">`parent_id` = #{parentId},</if>
+            <if test="level != null">`level` = #{level},</if>
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="path != null and path != ''">`path` = #{path},</if>
+            <if test="sort != null">`sort` = #{sort},</if>
+            <if test="available != null">`available` = #{available},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="opDirective != null and opDirective != ''">`op_directive` = #{opDirective},</if>
+            <if test="icon != null and icon != ''">`icon` = #{icon},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
     <select id="selectMenuByRoleId" resultMap="BaseMenu">
         SELECT m.* FROM t_menu m, t_role_menu rm
         WHERE m.id = rm.menu_id
@@ -62,6 +78,7 @@
             <if test="sort != null">#{sort},</if>
             <if test="available != null">#{available},</if>
             <if test="type != null ">#{type},</if>
+            <if test="opDirective != null and path != ''">#{opDirective},</if>
             <if test="icon != null and icon != ''">#{icon},</if>
         </trim>
     </insert>

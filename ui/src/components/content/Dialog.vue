@@ -4,7 +4,7 @@
 	<el-dialog
 		v-model="isVisible"
 		:show-close="false"
-		:width="typeof width === 'string' && width.indexOf('%') !== -1 ? width : echartsFit(width)"
+		:width="typeof width === 'string' && width.indexOf('%') !== -1 ? width : autoSize(width)"
 		:before-close="closeDialog"
 		:close-on-click-modal="props.isClickModalClose"
 		:close-on-press-escape="props.isCloseOnPressEscape"
@@ -19,7 +19,7 @@
 							{{ props.title }}
 							<span>
 								<el-tooltip v-if="session.getStorage('isTips') && props.tipText" popper-class="formTooltip" effect="dark" :content="props.tipText" placement="bottom-start">
-									<bz-icon name="icon-zhushi" :size="14" color="#3E7EE8" class="iconSize14" />
+									<Icon name="icon-zhushi" :size="14" color="#3E7EE8" class="iconSize14" />
 								</el-tooltip>
 							</span>
 						</h4>
@@ -46,12 +46,12 @@
 	</el-dialog>
 </template>
 
-<script setup name="BzDialog">
+<script setup name="Dialog">
 import { defineProps, defineEmits, watch, ref } from 'vue';
 import { ElButton, ElDialog, ElIcon } from 'element-plus';
 import { CloseBold } from '@element-plus/icons-vue';
 
-import { session, echartsFit } from '@/utils';
+import { session, autoSize } from '@/utils';
 
 const isVisible = ref(false);
 

@@ -4,7 +4,7 @@
 	</svg>
 </template>
 
-<script setup name="BzIcon">
+<script setup name="Icon">
 defineProps({
 	color: { type: String, default: 'black' },
 	name: { type: String, required: true },

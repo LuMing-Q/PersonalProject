@@ -139,18 +139,17 @@ public class LogAspect {
             if (StatusCode.CODE_200.eq(r.getCode())) {
                 log.setStatus(2);
                 log.setResult(JSON.toJSONString(result));
-            }
-            else {
+            } else {
                 log.setStatus(3);
                 log.setWrong(r.getMsg());
             }
             return result;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             log.setStatus(3);
             log.setWrong(e.getMessage());
             throw e;
+        } finally {
+            logExecutorService.execute(() -> optionLogDao.upsert(log));
         }
-        finally { logExecutorService.execute(() -> optionLogDao.upsert(log)); }
     }
 }

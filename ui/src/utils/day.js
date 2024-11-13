@@ -1,6 +1,4 @@
 // 时间格式转换
-
-// const dayjs = require('dayjs');
 import dayjs from 'dayjs';
 
 export const getDay = (times, format='YYYY-MM-DD HH:mm:ss') => {

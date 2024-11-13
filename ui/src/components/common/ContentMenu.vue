@@ -11,7 +11,7 @@
 	<router-view />
 </template>
 
-<script setup name="BzContentMenu">
+<script setup name="ContentMenu">
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

@@ -5,7 +5,7 @@
 <template>
   <span class="clipboardTextWrap" @click="copy">
 		<slot>
-			<!-- <bz-icon :name="props.iconName" :size="props.iconSize" style="vertical-align: middle" /> -->
+			<!-- <Icon :name="props.iconName" :size="props.iconSize" style="vertical-align: middle" /> -->
 			复制
 		</slot>
   </span>

@@ -24,7 +24,7 @@ const padding = ref(false);
 
 watch(
 	()=> router.currentRoute.value.path,
-	(value) => {
+	() => {
 		let urlPath = router.currentRoute.value.path;
 		if (urlPath === '/home') {
 			padding.value = true;
@@ -42,12 +42,6 @@ watch(
 		padding: 20px;
 		background: #EEEFEF;
 		height: calc(100vh - @headerHeight);
-
-	}
-
-	.adminHeader {
-		height: @headerHeight;
-		padding: 0;
 	}
 }
 .homeLayout1{
@@ -57,10 +51,10 @@ watch(
 		height: calc(100vh - @headerHeight);
 
 	}
+}
 
-	.adminHeader {
-		height: @headerHeight;
-		padding: 0;
-	}
+.adminHeader {
+	height: @headerHeight;
+	padding: 0 !important;
 }
 </style>

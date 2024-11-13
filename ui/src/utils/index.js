@@ -5,7 +5,7 @@ import session from './session.js';
 import request from './request.js';
 import { buildTree } from './tree.js';
 import day from './day.js';
-import echartsFit from './echartsFit.js';
+import autoSize from './autoSize.js';
 
 // 转换ob类型的数据
 const parseValues = (values) => JSON.parse(JSON.stringify(values));
@@ -28,5 +28,5 @@ export  {
   parseValues,
 	day,
 	encrypt,
-	echartsFit
+	autoSize
 }

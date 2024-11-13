@@ -3,7 +3,7 @@
 		<div class="label">{{ props.labelConfig.label }}</div>
 		<div class="tip">
 			<el-tooltip v-if="props.labelConfig.tipText" popper-class="formLabelTooltip" effect="dark" :content="props.labelConfig.tipText" placement="right">
-				<bz-icon name="icon-zhushi" :size="14" color="#3E7EE8" class="iconSize14" />
+				<Icon name="icon-zhushi" :size="14" color="#3E7EE8" class="iconSize14" />
 			</el-tooltip>
 		</div>
 	</div>

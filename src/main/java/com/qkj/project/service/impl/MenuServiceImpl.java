@@ -6,10 +6,12 @@ import com.qkj.project.entity.Menu;
 import com.qkj.project.entity.RoleMenu;
 import com.qkj.project.service.MenuService;
 import com.qkj.project.utils.BaseUtil;
+import com.qkj.project.vo.RoleMenuGrantVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author KeJiang Qi
@@ -34,16 +36,19 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public int addRoleMenu(List<RoleMenu> list) {
+    public int editMenu(Menu menu) {
+        return menuDao.editMenu(menu);
+    }
+
+    @Override
+    public int addRoleMenu(RoleMenuGrantVO menuGrant) {
+        menuDao.deleteRoleMenuByRoleId(menuGrant.getRoleId());
+        List<RoleMenu> list = menuGrant.getIds().stream().
+                map(m -> new RoleMenu().setId(BaseUtil.uuid()).setRoleId(menuGrant.getRoleId()).setMenuId(m)).
+                collect(Collectors.toList());
         return menuDao.addRoleMenu(list);
     }
 
-    /**
-     * @param name
-     * @param page
-     * @param size
-     * @return
-     */
     @Override
     public Page<Menu> getList(String name, int page, int size) {
         int total = menuDao.getCount(name);
@@ -58,10 +63,5 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public int deleteMenuByMenuId(String menuId) {
         return menuDao.deleteMenuByMenuId(menuId);
-    }
-
-    @Override
-    public Integer deleteRoleMenuByRoleId(String roleId) {
-        return menuDao.deleteRoleMenuByRoleId(roleId);
     }
 }

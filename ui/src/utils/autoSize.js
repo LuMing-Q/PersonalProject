@@ -1,4 +1,7 @@
-function echartsFit (res) {
+/*
+	自动计算元素大小
+*/
+function autoSize (res) {
 	let clientWidth =
 		window.innerWidth ||
 		document.documentElement.clientWidth ||
@@ -15,5 +18,5 @@ function echartsFit (res) {
 	return isString ? `${res * fontSize}px` : res * fontSize;
 }
 
-export default echartsFit
+export default autoSize
 

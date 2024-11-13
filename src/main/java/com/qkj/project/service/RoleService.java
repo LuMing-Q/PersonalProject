@@ -18,4 +18,11 @@ public interface RoleService {
      * @return
      */
     Page<Role> getRolePage(String name, int page, int size);
+
+    /**
+     * 新建角色
+     * @param role
+     * @return
+     */
+    int addRole(Role role);
 }

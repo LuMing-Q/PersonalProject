@@ -4,10 +4,12 @@ import com.qkj.project.common.Page;
 import com.qkj.project.dao.RoleDao;
 import com.qkj.project.entity.Role;
 import com.qkj.project.service.RoleService;
+import com.qkj.project.utils.BaseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,5 +29,12 @@ public class RoleServiceImpl implements RoleService {
         int total = roleDao.getRoleTotal(name);
         List<Role> list = roleDao.getRoles(size * (page - 1), size, name);
         return Page.of(total, page, list);
+    }
+
+    @Override
+    public int addRole(Role role) {
+        role.setId(BaseUtil.uuid());
+        role.setCreateTime(LocalDateTime.now());
+        return roleDao.addRole(role);
     }
 }

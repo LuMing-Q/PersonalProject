@@ -1,18 +1,5 @@
 <template>
     <div class="header">
-      <!-- 顶部导航栏左侧部分 -->
-      <div class="left">
-        <!-- logo -->
-		    <div class="logo">
-					<img src="@/assets/images/logo.png">
-				</div>
-        <!-- 标题 -->
-				<div class="nameBox">
-					<span class="mainTitle">{{ mainName }}</span>
-					<span class="subTitle">{{ subName }}</span>
-				</div>
-        <span class="projectTitle">{{ projectName }}</span>
-      </div>
 			<div class="menuBox">
 				<sub-menu />
 			</div>
@@ -61,12 +48,8 @@ const handleUser = async (cmd) => {
 const userInfo = session.getStorage('userInfo');
 
 const mainName = ref('');
-const subName = ref('');
-const projectName = ref('');
 const { proxy } = getCurrentInstance();
 mainName.value = proxy.global.mainName;
-subName.value = proxy.global.subName;
-projectName.value = proxy.global.projectName;
 
 
 onMounted(() => {});
@@ -74,66 +57,14 @@ onMounted(() => {});
   
 <style lang="less" scoped>
 .header {
-	padding: 0 27px;
+	padding: 0 15px;
 	height: @headerHeight;
-	background: @headerBgColor;
+	background: #42a5f5;
 	box-shadow: @headerShadow;
 	color: @subMenuTextHover;
 	display: flex;
-	// justify-content: space-between;
-	.left{
-		height: @headerHeight;
-		display: flex;
-		align-items: center;
-		.logo {
-			height: 36px;
-			width: 36px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			margin-right: 12px;
-			
-			img {
-				width: 100%;
-				height: 100%;
-			}
-		}
-
-		.siteTitle {
-			height: @headerHeight;
-			line-height: @headerHeight;
-			font-size: 24px;
-			color: @subMenuTextHover;
-		}
-	}
-
-	.nameBox {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-
-	.mainTitle {
-		font-size: 16px;
-		font-weight: 600;
-		letter-spacing: 0.02em;
-	}
-	.subTitle {
-		font-size: 12px;
-		font-weight: normal;
-		letter-spacing: 0.265em;
-		opacity: 0.8;
-    text-align-last: justify;
-	}
-	.projectTitle {
-		margin-left: 12px;
-		padding-left: 12px;
-		border-left: 1px solid rgba(249, 250, 252, 0.2);
-		font-size: 14px;
-	}
 
 	.menuBox {
-		margin-left: 40px;
 		height: @headerHeight;
 	  flex: 1;
 	}
