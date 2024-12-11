@@ -16,7 +16,7 @@ export const getRoleList = async (param) => {
 // 添加角色
 export const addRole = async (formData) => {
 	try {
-		const data = await post(`${apiPrefix}/add`, {}, formData);
+		const data = await post(`${apiPrefix}`, {}, formData);
 		return data;
 	} catch (err) {
 		console.log(err);
@@ -26,7 +26,7 @@ export const addRole = async (formData) => {
 // 编辑角色
 export const editRole = async (formData) => {
 	try {
-		const data = await put(`${apiPrefix}/edit`, {}, formData);
+		const data = await put(`${apiPrefix}`, {}, formData);
 		return data;
 	} catch (err) {
 		console.log(err);
@@ -36,7 +36,7 @@ export const editRole = async (formData) => {
 // 删除角色
 export const removeRole = async (id) => {
 	try {
-		const data = await remove(`${apiPrefix}/del/${id}`);
+		const data = await remove(`${apiPrefix}`, id);
 		return data;
 	} catch (err) {
 		console.log(err);
@@ -47,16 +47,6 @@ export const removeRole = async (id) => {
 export const getAllRole = async (param) => {
 	try {
 		const data = await get(`${apiPrefix}/all`, param);
-		return data;
-	} catch (err) {
-		console.log(err);
-	}
-};
-
-// 角色授权
-export const grantMenu = async (formData) => {
-	try {
-		const data = await post(`${apiPrefix}/grant`, {}, formData);
 		return data;
 	} catch (err) {
 		console.log(err);

@@ -54,4 +54,9 @@ public class MenuController {
     public int deleteMenuByMenuId(@PathVariable("menu_id") String menuId) {
         return menuService.deleteMenuByMenuId(menuId);
     }
+
+    @GetMapping("/all")
+    public List<Menu> getList() {
+        return menuService.getAll();
+    }
 }

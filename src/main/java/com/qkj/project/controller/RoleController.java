@@ -27,8 +27,18 @@ public class RoleController {
         return roleService.getRolePage(name, page, size);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public int addRole(@Validated @RequestBody Role role) {
         return roleService.addRole(role);
     }
+
+   @PutMapping
+   public int updateRole(@Validated @RequestBody Role role) {
+       return roleService.updateRole(role);
+   }
+
+   @DeleteMapping
+    public int deleteRole(@RequestParam(value = "id") String id) {
+       return roleService.deleteRole(id);
+   }
 }

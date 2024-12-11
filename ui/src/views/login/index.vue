@@ -29,14 +29,17 @@
 			<!-- <a href="#" class="btns">忘记密码</a>
 			<a href="#" class="btns signup">注册</a> -->
 		</div>
+		<!-- <div style="width: 50%;">
+			<CircularProgressBar />
+		</div> -->
   </div>
 </template>
 
 <script setup name="InteriorLogin">
-import { reactive, ref, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userLogin, getUserMenuList } from '@/api/platform/userInfo';
-import { session, autoSize } from '@/utils';
+import { getUserMenuList, userLogin } from '@/api/platform/userInfo';
+import { autoSize, session } from '@/utils';
 
 const isDisabledSubmit = ref(false); // 登录按钮是否可用
 const formRef = ref();
@@ -64,7 +67,6 @@ const submit = (formEle) => {
 				isDisabledSubmit.value = false;
 				session.setStorage('token', res.data.token);
 				session.setStorage('userInfo', res.data.user);
-				router.push('/');
 				let userMenus = await getUserMenuList(res.data.user.roleId);
 				if (userMenus && userMenus.length > 0) {
 					session.setStorage('userMenus', userMenus);

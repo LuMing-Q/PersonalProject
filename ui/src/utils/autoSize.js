@@ -1,22 +1,16 @@
 /*
-	自动计算元素大小
+	自动计算元素宽度
 */
 function autoSize (res) {
-	let clientWidth =
-		window.innerWidth ||
-		document.documentElement.clientWidth ||
-		document.body.clientWidth;
-	if (!clientWidth) return;
-	let isString = false;
+  const clientWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  if (!clientWidth) return;
 
-	let fontSize = clientWidth / 1920;
-	if (typeof res === 'string' && (res.indexOf('px') !== -1 || res.indexOf('PX') !== -1)) {
-		isString = true;
-		const len = res.length - 2;
-		res = res.substr(0, len);
-	}
-	return isString ? `${res * fontSize}px` : res * fontSize;
+  const autoWidth = clientWidth / 1920;
+  if (typeof res === 'string' && /px/i.test(res)) {
+    return `${parseFloat(res) * autoWidth}px`;
+  } else {
+    return res * autoWidth;
+  }
 }
 
 export default autoSize
-

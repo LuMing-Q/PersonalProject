@@ -41,8 +41,8 @@
             <if test="sort != null">`sort` = #{sort},</if>
             <if test="available != null">`available` = #{available},</if>
             <if test="type != null">`type` = #{type},</if>
-            <if test="opDirective != null and opDirective != ''">`op_directive` = #{opDirective},</if>
-            <if test="icon != null and icon != ''">`icon` = #{icon},</if>
+            <if test="opDirective != null">`op_directive` = #{opDirective},</if>
+            <if test="icon != null">`icon` = #{icon},</if>
         </trim>
         where id = #{id}
     </update>
@@ -66,8 +66,8 @@
             <if test="sort != null">`sort`,</if>
             <if test="available != null">`available`,</if>
             <if test="type != null">`type`,</if>
-            <if test="opDirective != null and opDirective != ''">`op_directive`,</if>
-            <if test="icon != null and icon != ''">`icon`,</if>
+            <if test="opDirective != null">`op_directive`,</if>
+            <if test="icon != null">`icon`,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null and id != ''">#{id},</if>
@@ -78,8 +78,8 @@
             <if test="sort != null">#{sort},</if>
             <if test="available != null">#{available},</if>
             <if test="type != null ">#{type},</if>
-            <if test="opDirective != null and path != ''">#{opDirective},</if>
-            <if test="icon != null and icon != ''">#{icon},</if>
+            <if test="opDirective != null">#{opDirective},</if>
+            <if test="icon != null">#{icon},</if>
         </trim>
     </insert>
 
@@ -96,7 +96,7 @@
         select * from t_menu
         <where>
             <if test="name != null and name != '' ">
-                `name` LIKE CONCAT (#{name},'%')
+                `name` LIKE CONCAT ('%', #{name},'%')
             </if>
         </where>
         ORDER BY `level`, sort ASC
@@ -110,4 +110,8 @@
     <delete id="deleteMenuByMenuId">
         delete from t_menu where `id` = #{menuId}
     </delete>
+
+    <select id="getAll" resultMap="BaseMenu">
+        select * from t_menu
+    </select>
 </mapper>

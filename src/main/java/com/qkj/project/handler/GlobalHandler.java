@@ -158,8 +158,20 @@ public class GlobalHandler implements ResponseBodyAdvice<Object> {
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
         if (body instanceof LinkedHashMap) {
-            LinkedHashMap map = (LinkedHashMap) body;
-            return Result.of((Integer) map.get("status"), "请求失败", (String)map.get("error") + "  " + (String) map.get("path"));
+            LinkedHashMap<?, ?> map = (LinkedHashMap<?, ?>) body;
+            Object statusObj = map.get("status");
+            Object errorObj = map.get("error");
+            Object pathObj = map.get("path");
+
+            Integer status = statusObj != null ? Integer.valueOf(statusObj.toString()) : null;
+            String error = errorObj != null ? errorObj.toString() : "";
+            String path = pathObj != null ? pathObj.toString() : "";
+
+            if (status != null) {
+                return Result.of(status, "请求失败", error + "  " + path);
+            } else {
+                return Result.ok(body);
+            }
         }
         /**
          * 当 Controller的方法返回值类型为 String 时报错原因

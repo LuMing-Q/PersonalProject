@@ -25,7 +25,7 @@ public class MinioCfg {
     private String secretKey;
     private String  bucketName;
 
-    @Bean("minio-config")
+    @Bean("minio")
     public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(endpoint)

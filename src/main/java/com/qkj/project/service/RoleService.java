@@ -25,4 +25,18 @@ public interface RoleService {
      * @return
      */
     int addRole(Role role);
+
+    /**
+     * 更新角色
+     * @param role
+     * @return
+     */
+    int updateRole(Role role);
+
+    /**
+     * 删除角色
+     * @param id
+     * @return
+     */
+    int deleteRole(String id);
 }

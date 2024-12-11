@@ -24,7 +24,7 @@ public class Menu {
     private String path;
     @NotNull(message = "排序不能为空")
     private int sort;
-    private int available;
+    private Integer available;
     private int type;
     @JsonProperty("op_directive")
     private String opDirective;

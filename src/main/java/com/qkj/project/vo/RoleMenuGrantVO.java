@@ -3,7 +3,6 @@ package com.qkj.project.vo;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -18,9 +17,5 @@ public class RoleMenuGrantVO {
      */
     @NotBlank(message = "角色不能为空")
     private String roleId;
-    /**
-     * 给当前角色授予的菜单id
-     */
-    @NotEmpty(message = "授权菜单不能为空")
     private List<String> ids;
 }

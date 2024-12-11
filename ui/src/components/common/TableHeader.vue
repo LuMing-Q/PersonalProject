@@ -19,7 +19,7 @@
 			</el-button>
 		</div>
 		<div v-if="props.searchConfig && props.searchConfig.length" class="searchWrap">
-			<template v-for="item in props.searchConfig" :key="`${item.field}_${index}`">
+			<template v-for="item in props.searchConfig" :key="`${item.field}`">
 				<div class="search">
 					<div class="labelWrap">{{ item.label }}</div>
 					<div class="valueWrap">
@@ -46,13 +46,14 @@
 			</template>
 			<div class="btnGroup">
         <div class="searchBox">
-          <el-button type="primary" class="searchBtn" 
-					:style="{background: '#285FBB'}" :icon="Search" @click="getSearchData">搜索</el-button>
+          <el-button type="primary" class="searchBtn" :icon="Search" @click="getSearchData">
+						搜索
+					</el-button>
 				</div>
 				<!-- 刷新按钮 -->
 				<div v-if="isShowRefresh" class="searchBox" @click="handleRefresh">
 					<el-button type="primary" class="refreshBtn" >
-						<Icon name="icon-zhongzhi" color="#285FBB" class="iconSize16 icon-margin-right"></icon>
+						<Icon name="icon-zhongzhi" color="#285FBB" class="iconSize16 icon-margin-right" />
 					</el-button>
 				</div>
       </div>
@@ -61,7 +62,7 @@
 </template>
 
 <script setup name="TableHeader">
-import { ref, defineProps, defineExpose } from 'vue';
+import { defineExpose, defineProps, ref } from 'vue';
 import { isEmpty } from 'lodash';
 import { Plus, Search } from '@element-plus/icons-vue';
 

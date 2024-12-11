@@ -32,18 +32,13 @@ auth:
   type: jwt # 现有 1-jwt:通过 jwt 生成 token, 2-redis: 通过 redis 存储 token
   login-expire-time: 3600 # redis 过期时间
 
-# 对象存储，即附件存储，使用S3协议配置内容，限免配置只是占位测试
+# minio 存储地址
 unify:
   minio:
     endpoint: http://13.11.100.52:31506 # 易智瑞
-    accessKey: minioadmin
-    secretKey: Gistack@2024
-    bucketName: aggregation-source-data
-  minio-oa:
-    endpoint: http://13.11.102.254:6188  # 附件存储
-    accessKey: yIi2K47J0Blpgz7xLQE0
-    secretKey: MPGGpvUVIwhDvwqmbD7HV70pxUS2YY4SgVcCLwvw
-    bucketName: sharex-dev
+    accessKey: minioAdmin
+    secretKey: Admin@123
+    bucketName: personal-minio
 
 # 异步任务线程池配置
 task:

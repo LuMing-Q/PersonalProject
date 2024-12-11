@@ -37,13 +37,23 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public int editMenu(Menu menu) {
+        if (menu.getType() == 1) {
+            menu.setOpDirective("");
+        }
+        if (!("-1".equals(menu.getParentId()))) {
+            menu.setIcon("");
+        }
         return menuDao.editMenu(menu);
     }
 
     @Override
     public int addRoleMenu(RoleMenuGrantVO menuGrant) {
         menuDao.deleteRoleMenuByRoleId(menuGrant.getRoleId());
-        List<RoleMenu> list = menuGrant.getIds().stream().
+        List<String> ids = menuGrant.getIds();
+        if (ids.isEmpty()) {
+            return menuDao.deleteRoleMenuByRoleId(menuGrant.getRoleId());
+        }
+        List<RoleMenu> list = ids.stream().
                 map(m -> new RoleMenu().setId(BaseUtil.uuid()).setRoleId(menuGrant.getRoleId()).setMenuId(m)).
                 collect(Collectors.toList());
         return menuDao.addRoleMenu(list);
@@ -63,5 +73,10 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public int deleteMenuByMenuId(String menuId) {
         return menuDao.deleteMenuByMenuId(menuId);
+    }
+
+    @Override
+    public List<Menu> getAll() {
+        return menuDao.getAll();
     }
 }

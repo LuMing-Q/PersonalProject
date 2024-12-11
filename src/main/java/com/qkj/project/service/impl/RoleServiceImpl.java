@@ -1,6 +1,8 @@
 package com.qkj.project.service.impl;
 
 import com.qkj.project.common.Page;
+import com.qkj.project.common.enumerations.StatusCode;
+import com.qkj.project.common.exception.BusinessException;
 import com.qkj.project.dao.RoleDao;
 import com.qkj.project.entity.Role;
 import com.qkj.project.service.RoleService;
@@ -36,5 +38,22 @@ public class RoleServiceImpl implements RoleService {
         role.setId(BaseUtil.uuid());
         role.setCreateTime(LocalDateTime.now());
         return roleDao.addRole(role);
+    }
+
+    @Override
+    public int updateRole(Role role) {
+        return roleDao.updateRole(role);
+    }
+
+    @Override
+    public int deleteRole(String id) {
+        Integer roleBuiltIn = roleDao.getRoleBuiltIn(id);
+        if (roleBuiltIn == null) {
+            throw BusinessException.of(StatusCode.CODE_400, "角色不存在");
+        }
+        if (roleBuiltIn == 1) {
+            throw BusinessException.of(StatusCode.CODE_403, "内置角色不能删除");
+        }
+        return roleDao.deleteRole(id);
     }
 }

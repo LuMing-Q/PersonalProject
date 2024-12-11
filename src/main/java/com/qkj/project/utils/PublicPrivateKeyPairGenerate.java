@@ -6,7 +6,7 @@ import java.util.Base64;
 /**
  * @author KeJiang Qi
  * @date 2024/8/22 - 9:04
- * @description 公司密钥对生成
+ * @description 公私密钥对生成
  */
 public class PublicPrivateKeyPairGenerate {
 

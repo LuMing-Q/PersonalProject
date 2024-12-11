@@ -44,10 +44,10 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
-import { buildTree, autoSize } from '@/utils'; // 树形结构被注释
+import { onMounted, reactive, ref } from 'vue';
+import { autoSize, buildTree } from '@/utils'; // 树形结构被注释
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { getAllList, removeMenu } from '@/api/manager/menu';
+import { getPage, removeMenu } from '@/api/manager/menu';
 import DetailDialog from './DetailDialog.vue';
 import FormDialog from './FormDialog.vue';
 import { cloneDeep } from 'lodash';
@@ -58,10 +58,11 @@ const searchConfig = reactive([
 	{ type: 'input', field: 'name', label: '菜单名称' }
 ]);
 const menus = ref([]);
+const AllMenu = ref([]);
 const dataArray = ref([]);
 const getData = async () => {
 	// 获取数据
-	const res = await getAllList(param.value);
+	const res = await getPage(param.value);
 	const arr = [];
 	const arr2 = [];
 	if (res.data && res.data.length >= 0) {
@@ -79,8 +80,10 @@ const getData = async () => {
 		// 树形结构
 		dataArray.value = buildTree(arr, 'id', 'parent_id'); 
 		menus.value = buildTree(arr2, 'id', 'parent_id');
+		AllMenu.value = arr2;
 	}
 	menus.value.push({ value: '-1', label: '根目录' });
+	AllMenu.value.push({ value: '-1', label: '根目录' });
 };
 // 条件搜索
 const handleSearch = (e) => {
@@ -100,12 +103,12 @@ const drawerClick = (row) => {
 const formDialogRef = ref(); // 详情
 // 新增
 const addClick = () => {
-	formDialogRef.value.openDailog(menus.value, '');
+	formDialogRef.value.openDailog(menus.value, '', AllMenu.value);
 };
 // 编辑
 const editClick = (row) => {
 	const formData = cloneDeep(row);
-	formDialogRef.value.openDailog(menus.value, formData);
+	formDialogRef.value.openDailog(menus.value, formData, AllMenu.value);
 };
 // 删除角色
 const deleteClick = (row) => {

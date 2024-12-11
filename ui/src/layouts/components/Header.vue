@@ -5,33 +5,23 @@
 			</div>
       <!-- 顶部导航栏右侧部分 -->
       <div class="right">
-      <!-- dropdown下拉 -->
-        <!-- <div>
-					<el-badge :is-dot="isDot" class="item isDot">
-						<el-icon class="head-icon-box" @click="$router.push('/operationsCenter/alert')"><Bell  /></el-icon>
-					</el-badge>
-        </div> -->
-				<div>
-          <el-dropdown @command="(cmd) => handleUser(cmd)">
-						<span class="el-dropdown-link">
-							{{ userInfo?.name || 'admin' }}
-							<el-icon class="el-icon--right">
-								<arrow-down />
-							</el-icon>
-						</span>
-						<template #dropdown>
-							<el-dropdown-menu>
-								<el-dropdown-item command="logout">退出平台</el-dropdown-item>
-							</el-dropdown-menu>
-						</template>
-					</el-dropdown>
-        </div>
-      </div>
+				<el-dropdown style="outline: none;" @command="(cmd) => handleUser(cmd)">
+					<span class="el-dropdown-link">
+						{{ userInfo?.realName || 'admin' }}
+						<Icon :name="'icon-tuichu'" class="iconSize14 right-box" :color="'#fff'" />
+					</span>
+					<template #dropdown>
+						<el-dropdown-menu class="custom-dropdown-item">
+							<el-dropdown-item command="logout">退出平台</el-dropdown-item>
+						</el-dropdown-menu>
+					</template>
+				</el-dropdown>
+      </div>																																																											
     </div>
   </template>
   
 <script setup name="Header">
-import { ref, getCurrentInstance, onMounted } from 'vue';
+import { getCurrentInstance, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { session } from '@/utils';
 import SubMenu from './SubMenu.vue';
@@ -41,6 +31,7 @@ const router = useRouter();
 const handleUser = async (cmd) => {
 	if (cmd === 'logout') {
 		// 退出 ===== 逻辑待优化
+		session.clearStorageAll();
 		router.push('/login');
 	}
 };
@@ -74,11 +65,26 @@ onMounted(() => {});
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		.el-dropdown-link {
+			outline: none;
+			display: flex;
+			align-items: center;
+
+			.right-box {
+				margin-left: 8px;
+			}
+		}
+		
 		:deep(.el-dropdown) {
 			height: @headerHeight;
 			line-height: @headerHeight;
 			color: #FFF;
 		}
+
+		.custom-dropdown-item {
+				margin-top: 10px;
+			}
 
 		.head-icon-box {
 			width: 18px;

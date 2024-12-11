@@ -44,17 +44,11 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="4"></el-col>
-				<el-col :span="10">
-					<el-form-item label="菜单等级:">
-						<el-input v-model="ruleForm.level" placeholder="请输入" /> 
-					</el-form-item>
-				</el-col>
 				<el-col v-if="ruleForm['parent_id'] && ruleForm['parent_id'] === '-1'" :span="10">
 					<el-form-item label="权限图标:" prop="icon">
 						<el-input v-model="ruleForm.icon" placeholder="请输入" /> 
 					</el-form-item>
 				</el-col>
-				<el-col v-if="ruleForm['parent_id'] && ruleForm['parent_id'] === '-1'" :span="4"></el-col>
 				<el-col v-if="ruleForm.type === 0" :span="10">
 					<el-form-item label="操作指令:" prop="icon">
 						<el-input v-model="ruleForm.op_directive" placeholder="请输入" /> 
@@ -67,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineEmits } from 'vue';
+import { defineEmits, defineExpose, ref } from 'vue';
 import { cloneDeep } from 'lodash';
 import { addMenu, editMenu } from '@/api/manager/menu';
 import { autoSize } from '@/utils';
@@ -75,11 +69,42 @@ import { autoSize } from '@/utils';
 const emits = defineEmits(['onRefresh']);
 
 // 类型
-const 																																	options = [
+const options = [
 	{ text: '菜单', value: 1 },
 	{ text: '操作', value: 0 },
 ];
-		
+const isShowForm = ref(false);
+const formRef = ref();
+const ruleForm = ref({
+	name: '',
+	type: 1,
+	available: 1,
+});
+const allMenu = ref([]);
+// 计算层级
+const countLevel = (pid, level) => {
+	allMenu.value.forEach(el => {
+		if (el.id === pid) {
+			if (el.parent_id === '-1') {
+				ruleForm.value.level = level + 1;
+			} else {
+				countLevel(el.parent_id, level + 1);
+			}
+		} 
+	});
+};
+const validatorParentId = (rule, value, callback) => {
+	if (!ruleForm.value.parent_id) {
+		callback(new Error('上级菜单不能为空'));
+	} else {
+		if (ruleForm.value.parent_id === '-1') {
+			ruleForm.value.level = 1;
+		} else {
+			countLevel(ruleForm.value.parent_id, 1);		
+		}
+		callback();
+	}
+};
 // 校验规则
 const rules = ref({
 	name: [
@@ -89,7 +114,7 @@ const rules = ref({
 		{ required: true, message: '请选择菜单类型', trigger: 'change' }
 	],
 	parent_id: [
-		{ required: true, message: '上级菜单不能为空', trigger: 'change' }
+		{ required: true, validator: validatorParentId, trigger: 'change' }
 	],
 	sort: [
 		{ required: true, message: '排序不能为空', trigger: 'change' }
@@ -101,13 +126,6 @@ const rules = ref({
 		{ required: true, message: '权限图标不能为空', trigger: 'change' }
 	]
 });
-const isShowForm = ref(false);
-const formRef = ref();
-const ruleForm = ref({
-	name: '',
-	type: 1,
-	available: 1,
-});
 
 const onCancel = () => {
 	isShowForm.value = false;
@@ -117,7 +135,8 @@ const onCancel = () => {
 
 const menus = ref();
 const title = ref();
-const openDailog = (list, row) => {
+const openDailog = (list, row, AllMenu) => {
+	allMenu.value = AllMenu;
 	title.value = '新增菜单';
 	if (list) {
 		menus.value = list;
@@ -137,6 +156,8 @@ const onSubmit = async () => {
 			const formData = cloneDeep(ruleForm.value);
 			formData.level = parseInt(formData.level);
 			formData.sort = parseInt(formData.sort);
+			formData.available = parseInt(formData.available);
+			formData.type = parseInt(formData.type);
 			if (title.value === '编辑菜单') {
 				const menuInfo = await editMenu(formData);
 				if (menuInfo) {

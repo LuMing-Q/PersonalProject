@@ -26,7 +26,7 @@
 
 <script setup name="SubMenu">
 import { onMounted, ref, watch } from 'vue';
-import { session, buildTree } from '@/utils';
+import { buildTree, session } from '@/utils';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

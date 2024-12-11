@@ -1,7 +1,7 @@
 <template>
 	<div class="content-manager">
 		<div class="listWrap listWrap-head_height" style="margin:0">
-			<bz-table-header :searchConfig="searchConfig" :is-show-create="true" :type="'角色'" @onSearch="handleSearch" @onCreate="addClick"></bz-table-header>
+			<table-header :searchConfig="searchConfig" :is-show-create="true" :type="'角色'" @onSearch="handleSearch" @onCreate="addClick" />
 		</div>
 		<div class="listWrap" style="flex: 1;padding-bottom: 0;">
 			<el-table
@@ -10,20 +10,17 @@
 				:stripe="false">
 				<el-table-column label="角色名称" prop="name" show-overflow-tooltip />
 				<el-table-column label="描述" prop="description" show-overflow-tooltip />
-				<el-table-column label="创建时间" prop="createOn" :formatter="(row) => (day.getDay(row.createOn))"/>
-				<el-table-column label="操作" align="center" :width="echartsFit(400)">
+				<el-table-column label="创建时间" prop="createTime" :formatter="(row) => (day.getDay(row.createTime))"/>
+				<el-table-column label="操作" align="center" :width="autoSize(310)">
 					<template #default="scope">
 						<div style="display: flex;">
-							<el-button type="primary" plain @click="drawerClick(scope.row)">
-								<el-icon class="operate-margin-right"><View /></el-icon>详情
-							</el-button>
-							<el-button type="primary" plain class="operate-margin-left" @click="editClick(scope.row)">
+							<el-button v-if="scope.row.builtIn !== 1" type="primary" plain class="operate-margin-left" @click="editClick(scope.row)">
 								<el-icon class="operate-margin-right"><Edit /></el-icon>编辑
 							</el-button>
-							<el-button type="primary" plain class="operate-margin-left" @click="menuClick(scope.row)">
-								<bz-icon :name="'icon-caidanquanxian'" :size="echartsFit(16)" class="iconSize16 operate-margin-right" />菜单权限
+							<el-button v-if="scope.row.builtIn !== 1" type="primary" plain class="operate-margin-left" @click="menuClick(scope.row)">
+								<Icon :name="'icon-caidanquanxian'" class="iconSize16 operate-margin-right" />菜单权限
 							</el-button>
-							<el-button type="danger" plain class="operate-margin-left" @click="deleteClick(scope.row)">
+							<el-button v-if="scope.row.builtIn !== 1" type="danger" plain class="operate-margin-left" @click="deleteClick(scope.row)">
 								<el-icon class="operate-margin-right"><Delete /></el-icon>删除
 							</el-button>
 						</div>
@@ -34,9 +31,7 @@
 				</template>
 			</el-table>
 			<Pagination :total="total" :pageInfo="page"  @returnPageInfo="getPagiation" />
-		</div>
-		<!-- 详情 -->
-		<DetailDialog ref="detailDialogRef" />
+			</div>
 		<!-- 新增 -->
 		<AddDialog ref="addDialogRef" @onRefresh="onRefresh" />
 		<!-- 新增 -->
@@ -44,11 +39,10 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
-import { day, echartsFit } from '@/utils';
+import { onMounted, reactive, ref } from 'vue';
+import { autoSize, day } from '@/utils';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getRoleList, removeRole } from '@/api/manager/role';
-import DetailDialog from './DetailDialog.vue';
 import AddDialog from './AddDialog.vue';
 import MenuDialog from './MenuDialog.vue';
 
@@ -58,11 +52,6 @@ const param = ref({
 	page: 1,
 	size: 10
 });
-// table 回到总数和当前页码
-const getTotal = (res) => {
-	total.value = res.total;
-	page.value = res.page;
-};
 // 表头筛选配置
 const searchConfig = reactive([
 	{ type: 'input', field: 'name', label: '角色名称' }
@@ -97,12 +86,7 @@ const getPagiation = (res) => {
 	param.value.page = res.page;
 	param.value.size = res.size;
 	getData();
-};
-const detailDialogRef = ref(); // 详情
-// 查看详情
-const drawerClick = (row) => {
-	detailDialogRef.value.openDailog(row);
-};
+};											
 const addDialogRef = ref(); // 详情
 // 新增
 const addClick = () => {
@@ -115,7 +99,7 @@ const editClick = (row) => {
 const menuDialogRef = ref(); // 详情
 // 新增
 const menuClick = (row) => {
-	menuDialogRef.value.openDailog(row.id);
+	menuDialogRef.value.openDailog(row.id, row.code);
 };
 // 删除角色
 const deleteClick = (row) => {
@@ -128,7 +112,7 @@ const deleteClick = (row) => {
 		inputValidator: (value) => value ? true : '请输入角色名'
 	}).then(async ({ value }) => {
 		if (value === row.name) {
-			const removeData = await removeRole(row.id);
+			const removeData = await removeRole({ id: row.id });
 			if (removeData && removeData.code === 200) {
 				onRefresh();
 			}

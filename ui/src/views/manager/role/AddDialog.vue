@@ -6,14 +6,14 @@
 			:model="ruleForm"
 			:rules="rules"
 			label-position="right"
-			:label-width="echartsFit(90)"
+			:label-width="autoSize(90)"
 			class="demo-ruleForm"
 			status-icon
 		>
 			<el-row>
 				<el-col :span="18">
 					<el-form-item label="角色名称:" prop="name">
-						<el-input v-model="ruleForm.name" placeholder="请输入" /> 
+						<el-input v-model.trim="ruleForm.name" placeholder="请输入" /> 
 					</el-form-item>
 				</el-col>
 				<el-col :span="18">
@@ -33,17 +33,16 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineEmits } from 'vue';
+import { defineEmits, defineExpose, ref } from 'vue';
 import { cloneDeep } from 'lodash';
-// import { addRole, editRole } from '@/api/manager/role';
-import { echartsFit } from '@/utils';
+import { addRole, editRole } from '@/api/manager/role';
+import { autoSize } from '@/utils';
+
 const emits = defineEmits(['onRefresh']);
 
 const roleType = ref([
 	{ label: '管理员', value: 'admin' },
-	{ label: '横向角色', value: 'transverse' },
-	{ label: '纵向角色', value: 'portrait' }
-	
+	{ label: '项目普通成员', value: 'member' }
 ]);
 
 // 校验规则
@@ -89,16 +88,16 @@ const onSubmit = async () => {
 		if (valid) {
 			const formData = cloneDeep(ruleForm.value);
 			if (title.value === '编辑角色') {
-				// const userInfo = await editRole(formData);
-				// if (userInfo) {
-				// 	emits('onRefresh');
-				// }
+				const roleInfo = await editRole(formData);
+				if (roleInfo) {
+					emits('onRefresh');
+				}
 				onCancel();
 			} else {
-				// const userInfo = await addRole(formData);
-				// if (userInfo) {
-				// 	emits('onRefresh');
-				// }
+				const roleInfo = await addRole(formData);
+				if (roleInfo) {
+					emits('onRefresh');
+				}
 				onCancel();
 			}
 		}

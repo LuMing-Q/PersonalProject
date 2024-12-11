@@ -55,4 +55,10 @@ public interface MenuService {
      * @return
      */
     int deleteMenuByMenuId(String menuId);
+
+    /**
+     * 查询所有菜单列表
+     * @return
+     */
+    List<Menu> getAll();
 }

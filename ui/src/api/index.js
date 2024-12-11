@@ -55,17 +55,6 @@ export const put = (url = '', params = {}, values = {}) => request({
 export const get = (url = '', params = {}, isLoading = true) => request({ url, params, isLoading });
 
 /**
- * getList分页请求
- * @param url 接口地址
- * @param params 查询参数
- * @returns response
- */
-export const getList = (url = '', params = {}) => {
-	// params.page -= 1; // 下标减1, 从0 开始
-	return request({ url, params });
-};
-
-/**
  * delete请求
  * @param url 接口地址
  * @param params 条件参数
@@ -78,6 +67,7 @@ export const remove = (url = '', params = {}, values = {}) => request({
 	params,
 	data: values,
 });
+
 /**
  * patch请求
  * @param url 接口地址
@@ -89,6 +79,7 @@ export const patch = (url = '', params = {}) => request({
 	method: 'PATCH',
 	data: params,
 });
+
 /**
  * 上传
  * @param {*} url 接口地址

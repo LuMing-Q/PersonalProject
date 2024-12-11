@@ -67,4 +67,10 @@ public interface MenuDao {
     Integer deleteMenuByMenuId(@Param("menuId") String menuId);
 
     int editMenu(Menu menu);
+
+    /**
+     * 查询所有菜单
+     * @return
+     */
+    List<Menu> getAll();
 }
