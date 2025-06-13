@@ -8,7 +8,7 @@
 				<el-dropdown style="outline: none;" @command="(cmd) => handleUser(cmd)">
 					<span class="el-dropdown-link">
 						{{ userInfo?.realName || 'admin' }}
-						<Icon :name="'icon-tuichu'" class="iconSize14 right-box" :color="'#fff'" />
+						<Icon :name="'icon-tuichu'" class="iconSize14 right-box" :color="'#000'" />
 					</span>
 					<template #dropdown>
 						<el-dropdown-menu class="custom-dropdown-item">
@@ -50,7 +50,7 @@ onMounted(() => {});
 .header {
 	padding: 0 15px;
 	height: @headerHeight;
-	background: #42a5f5;
+	background: #FFF;
 	box-shadow: @headerShadow;
 	color: @subMenuTextHover;
 	display: flex;
@@ -79,7 +79,7 @@ onMounted(() => {});
 		:deep(.el-dropdown) {
 			height: @headerHeight;
 			line-height: @headerHeight;
-			color: #FFF;
+			color: #000;
 		}
 
 		.custom-dropdown-item {

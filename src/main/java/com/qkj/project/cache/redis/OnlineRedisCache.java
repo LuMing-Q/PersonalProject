@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author KeJiang Qi
  * @date 2024/8/23 - 14:10
- * @description
+ * @description redis缓存用户登录信息
  */
 @Component
 public class OnlineRedisCache implements OnlineCache {

@@ -6,6 +6,8 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.HardwareAbstractionLayer;
 
+import java.text.DecimalFormat;
+
 /**
  * @author KeJiang Qi
  * @date 2024/12/5 - 11:50
@@ -29,6 +31,14 @@ public class MonitorServiceImpl implements MonitorService {
     @Override
     public double[] getCpuLoad() {
         final int cpuLoadTick = 1000; // 设置CPU负载的采样间隔为1000毫秒（1秒）
-        return processor.getProcessorCpuLoad(cpuLoadTick);
+        double[] processorCpuLoad = processor.getProcessorCpuLoad(cpuLoadTick);
+        // 创建一个保留两位小数的格式化器
+        DecimalFormat df = new DecimalFormat("#.000");
+
+        // 遍历数组并格式化每个元素
+        for (int i = 0; i < processorCpuLoad.length; i++) {
+            processorCpuLoad[i] = Double.parseDouble(df.format(processorCpuLoad[i]));
+        }
+        return processorCpuLoad;
     }
 }

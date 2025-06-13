@@ -29,8 +29,8 @@ auth:
   queryUrls: ''
   public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI71DbL/2sMTAmP22jdlhhU9TiVHjWr3I/kDTX821puYX5Q6nkb9bcTi3KjIMczTbSw4Lnem0flidzBtene+ltUCAwEAAQ==
   private-key: MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAjvUNsv/awxMCY/baN2WGFT1OJUeNavcj+QNNfzbWm5hflDqeRv1txOLcqMgxzNNtLDgud6bR+WJ3MG16d76W1QIDAQABAkBbXwWCg0WvqVa9zelrvtgUezqXWURqOcwkPJgr10ET8Ttp3ivS0eVQJKsiw2L44tpik3dRexas5JvJXeG63XgBAiEAxu/cvaBQmiG1M+FO/Nn4fZSuCJRkLvD27azvVLeIdOUCIQC39ouCFlvovxVwBMsdgM2E+T1TnuTozWMTG+E7surrMQIgVipab//aKYhkFd6G+dnnWW1mm+y6H+La8UMwPn9oKUkCIHLFLx5Wwrp/VGmRpALhE9dtA9TCof+X+8K1Nxzer+9RAiBPXK5Qeqa64m0qBGdl+P+FETWVqm6hxez9Fxp/iLo+Jw==
-  type: jwt # 现有 1-jwt:通过 jwt 生成 token, 2-redis: 通过 redis 存储 token
-  login-expire-time: 3600 # redis 过期时间
+  type: redis # 现有 1-jwt:通过 jwt 生成 token, 2-redis: 通过 redis 存储 token
+  login-expire-time: 3600 # redis 过期时间 8小时
 
 # minio 存储地址
 unify:

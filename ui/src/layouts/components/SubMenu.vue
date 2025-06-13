@@ -87,6 +87,8 @@ watch(() => router.currentRoute.value.path, (val) => {
   border-radius: 4px 4px 4px 4px;
   margin: 8px auto;
   text-align: center;
+	color: #409eff;
+	background-color: antiquewhite;
 
 	.icon-box {
 		margin-right: 2px;
@@ -104,7 +106,7 @@ watch(() => router.currentRoute.value.path, (val) => {
 
   .menuName {
     color: #fff;
-    background-color: #2196f3;
+    background-color: rgb(250, 181.5, 181.5);
   }
 }
 
@@ -135,7 +137,7 @@ watch(() => router.currentRoute.value.path, (val) => {
   border: none;
   .menuName {
     color: #fff;
-    background-color: #2196f3;
+    background-color: rgb(250, 181.5, 181.5);
   }
 }
 

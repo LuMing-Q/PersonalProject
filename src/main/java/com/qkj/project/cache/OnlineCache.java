@@ -5,7 +5,7 @@ import com.qkj.project.common.Online;
 /**
  * @author KeJiang Qi
  * @date 2024/8/23 - 14:09
- * @description
+ * @description redis 实现用户登录信息缓存接口
  */
 public interface OnlineCache {
     /**

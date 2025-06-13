@@ -23,24 +23,3 @@ export const getCategoryOption = async (params = {}) => {
 		console.log(err);
 	}
 };
-
-// 数据转换
-// JSON =》 对象数组
-export const postParam = async (formData) => {
-	try {
-		const res = await post(`${apiPrefix}/transform/param`, { isNotMess: true }, formData);
-		return res;
-	} catch (err) {
-		console.log(err);
-	}
-};
-
-// 对象数组 =》 JSON
-export const postJson = async (formData) => {
-	try {
-		const res = await post(`${apiPrefix}/transform/array`, { isNotMess: true }, formData);
-		return res;
-	} catch (err) {
-		console.log(err);
-	}
-};

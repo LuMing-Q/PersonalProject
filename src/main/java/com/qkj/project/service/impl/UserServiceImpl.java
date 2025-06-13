@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
             throw BusinessException.of(StatusCode.CODE_402, "密码错误");
         }
         if (BaseUtil.isEmpty(user.getRoleId())) {
-            throw BusinessException.of(StatusCode.CODE_410, "用户暂未分配角色权限，请联系管理员分配对应的角色权限");
+            throw BusinessException.of(StatusCode.CODE_403, "用户暂未分配角色权限，请联系管理员分配对应的角色权限");
         }
         user.clear();
         return user;

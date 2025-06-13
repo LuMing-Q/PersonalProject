@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
  * @author KeJiang Qi
  * @date 2024/8/22 - 10:46
- * @description
+ * @description 权限控制类
  */
 @RestController
 public class AuthController {
@@ -29,11 +28,15 @@ public class AuthController {
     @Value("${auth.type:jwt}AuthService")
     private String authType;
 
-    @Autowired
     private Map<String, AuthService> authServiceMap;
 
+    @Autowired
+    private void setAuthServiceMap(Map<String, AuthService> authServiceMap) {
+        this.authServiceMap = authServiceMap;
+    }
+
     @PostMapping("/login")
-    public Online login(@RequestBody Map<String, String> params, HttpServletRequest request) {
+    public Online login(@RequestBody Map<String, String> params) {
         return authServiceMap.get(authType).login(params);
     }
 

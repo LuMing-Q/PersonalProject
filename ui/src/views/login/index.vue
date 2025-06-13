@@ -29,9 +29,6 @@
 			<!-- <a href="#" class="btns">忘记密码</a>
 			<a href="#" class="btns signup">注册</a> -->
 		</div>
-		<!-- <div style="width: 50%;">
-			<CircularProgressBar />
-		</div> -->
   </div>
 </template>
 

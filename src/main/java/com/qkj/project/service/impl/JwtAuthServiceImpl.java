@@ -2,6 +2,7 @@ package com.qkj.project.service.impl;
 
 import cn.hutool.core.convert.NumberWithFormat;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONException;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import cn.hutool.jwt.signers.JWTSigner;
@@ -93,7 +94,10 @@ public class JwtAuthServiceImpl implements AuthService {
         X509EncodedKeySpec spec = new X509EncodedKeySpec(BaseUtil.base64decode(publicKey));
         PublicKey rsa = SecureUtil.generatePublicKey("RSA", spec);
         JWTSigner signer = JWTSignerUtil.rs256(rsa);
-        if (!JWTUtil.verify(token, signer)) {
+        try {
+            if (!JWTUtil.verify(token, signer)) { return 2; }
+            // jwt被手动修改，校验失败异常处理
+        } catch (JSONException e) {
             return 2;
         }
         JWT jwt = JWTUtil.parseToken(token);

@@ -78,18 +78,57 @@ public class OSHITest {
         // CentralProcessorUnit（中央处理器单元） 是 CPU 的一个抽象概念，它包含了 CPU 的一个或多个物理核心（物理处理器）
         CentralProcessor cpu = hardware.getProcessor();
         // 获取 CPU 相关信息
-        System.out.println("CPU 数量 = " + cpu.getPhysicalProcessorCount());
-        System.out.println("CPU 逻辑数量 = " + cpu.getLogicalProcessorCount());
+        System.out.println("物理CPU数: " + cpu.getPhysicalProcessorCount());
+        System.out.println("逻辑CPU数: " + cpu.getLogicalProcessorCount());
         // 获取 CPU 最大频率
         long maxFreq = cpu.getMaxFreq();
-        System.out.println("CPU 最大频率 = " + maxFreq);
+        System.out.println("CPU 最大频率： " + maxFreq);
         // 获取 CPU 当前频率 -----> 返回的是逻辑cpu的频率
         long[] currentFreq = cpu.getCurrentFreq();
-        System.out.println("CPU 当前频率 = " + Arrays.toString(currentFreq));
+        System.out.println("CPU 当前频率: " + Arrays.toString(currentFreq));
         // 获取 CPU 1s 内的 CPU 使用情况（逻辑CPU）
         double[] processorCpuLoad = cpu.getProcessorCpuLoad(1000);
-        System.out.println("CPU 负载 = " + Arrays.toString(processorCpuLoad));
+        System.out.println("CPU 负载: " + Arrays.toString(processorCpuLoad));
         CentralProcessor.ProcessorIdentifier processorIdentifier = cpu.getProcessorIdentifier();
-        System.out.println("CPU 信息 = " + processorIdentifier);
+        System.out.println("CPU 信息: " + processorIdentifier);
+    }
+
+    @SneakyThrows
+    @Test
+    public void continuousCpuUsage() {
+        CentralProcessor processor = oshi.getHardware().getProcessor();
+
+        // 初始化上一次采样的 ticks 状态
+        long[] prevTicks = processor.getSystemCpuLoadTicks();
+
+        for (int i = 0; i < 5; i++) {
+            // 等待一段时间采样
+            Thread.sleep(5000);
+
+            // 获取当前 ticks 状态并计算 CPU 使用率
+            long[] ticks = processor.getSystemCpuLoadTicks();
+            double cpuUsage = processor.getSystemCpuLoadBetweenTicks(prevTicks) * 100;
+            long userDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.USER);
+            long niceDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.NICE);
+            long systemDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.SYSTEM);
+            long idleDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.IDLE);
+            long iowaitDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.IOWAIT);
+            long irqDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.IRQ);
+            long softirqDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.SOFTIRQ);
+            long stealDiff = calculateDiff(ticks, prevTicks, CentralProcessor.TickType.STEAL);
+
+            long totalCpu = userDiff + niceDiff + systemDiff + idleDiff + iowaitDiff + irqDiff + softirqDiff + stealDiff;
+            double cpuTotal = 1.0 - (idleDiff * 1.0 / totalCpu);
+
+            // 使用日志框架记录CPU使用率
+            System.out.println("between way CPU Usage: " + cpuUsage);
+            System.out.println("count total CPU Usage: " + cpuTotal * 100);
+            // 更新采样状态
+            prevTicks = ticks;
+        }
+    }
+
+    private static long calculateDiff(long[] ticks, long[] prevTicks, CentralProcessor.TickType type) {
+        return ticks[type.ordinal()] - prevTicks[type.ordinal()];
     }
 }

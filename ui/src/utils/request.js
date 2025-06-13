@@ -20,8 +20,8 @@ const request = axios.create({
 
 // 全局加载提示
 let loadingInstance = null; // loading实例
-let isShowMessage = true; // 是否弹出请求提示信息
-let isMonitorRequest = true; // 是否为监控页面
+let isShowMessage = true; // 是否弹出请求接口反馈提示信息
+let isMonitorRequest = true; // 是否显示Loading(加载遮罩层)
 let requestCount = 0; // 请求次数
 
 // 显示loading
@@ -37,16 +37,15 @@ const hideLoading = () => {
 };
 
 request.interceptors.request.use(
-  (config) => {
-    isShowMessage =!(config.params && config.params.isNotMess);
-    // config.params.monitorGet  特殊处理， 监控页面请求不需要ElLoading
-    isMonitorRequest =!(config.params && config.params.monitorGet);
+	(config) => {
+    isShowMessage =config.params && !config.params.notMessage;
+		isMonitorRequest = config.params && !config.params.notLoding;
     if (isMonitorRequest) showLoading();
     const token = session.getStorage('token');
     if (token &&!isEmpty(token)) config.headers.Authorization = `Bearer ${token}`;
     if (config.params) {
-      delete config.params.monitorGet;
-      delete config.params.isNotMess;
+      delete config.params.notLoding;
+      delete config.params.notMessage;
     }
     return config;
   },
@@ -65,11 +64,12 @@ request.interceptors.response.use(
       ElMessage({ message: errMsg, type: 'error' });
       return Promise.reject(errMsg);
     }
-    // 增删改请求成功后显示提示信息  登录接口不显示提示信息
-    if ((method === 'post' || method === 'put' || method === 'delete' || method === 'patch') && url!== 'system/login') {
-      if (isShowMessage && r.code === 200) ElMessage({ message: r.msg, type: r.code === 200? 'success' : 'error' });
+    // 增删改请求成功后显示提示信息
+		if (method === 'post' || method === 'put' || method === 'delete' || method === 'patch') {
+			// 特殊处理 --> 登录接口和接口参数有 { notMessage: true } 不显示提示信息
+      if (isShowMessage && url !== '/qkj/login') ElMessage({ message: r.msg, type: r.code === 200? 'success' : 'error' });
       if (r.code === 200) return r;
-    }
+		}
     // token过期
     if (r && r.code === 401) {
       ElMessage({ message: r.msg, type: 'error' });
@@ -100,7 +100,7 @@ request.interceptors.response.use(
         ElMessage({ message: '服务不可用', type: 'error' });
       } else {
         ElMessage({
-          message: `${path}请求失败${status }: ${message}${error}`,
+          message: `${path}请求失败 ${status }: ${message}${error}`,
           type: 'error',
         });
       }
