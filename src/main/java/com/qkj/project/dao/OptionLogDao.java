@@ -9,45 +9,59 @@ import java.util.List;
 /**
  * @author KeJiang Qi
  * @date 2024/8/20 - 15:41
- * @description
+ * @description 日志持久层接口
  */
 @Mapper
 public interface OptionLogDao {
     /**
      * 新增/修改日志  --->  第一次新增没有返回结果和，所以使用 ON DUPLICATE 更新状态和操作结果
-     * @param log
-     * @return
+     * @param tableName 表名
+     * @param log 日志对象
+     * @return 影响行数
      */
-    int upsert(OptionLog log);
+    Integer upsert(@Param("tableName") String tableName, @Param("log") OptionLog log);
 
     /**
      * 查询符合条件的日志总数
-     * @param status
-     * @param operate
-     * @return
+     * @param status 状态
+     * @param operate 操作类型
+     * @return 日志总数
      */
-    long selectCount(@Param("status") Integer status, @Param("operate") String operate);
+    Long selectCount(@Param("status") Integer status, @Param("operate") String operate);
 
     /**
      * 分页查询
-     * @param status
+     * @param status 状态
      * @param operate 操作类型
-     * @param page
-     * @param size
-     * @return
+     * @param page 页码
+     * @param size 每页数量
+     * @return 日志列表
      */
     List<OptionLog> selectLimit(@Param("status") Integer status, @Param("operate") String operate, @Param("page") int page, @Param("size") int size);
 
     /**
      * 详情查看
-     * @param id
-     * @return
+     * @param id 日志ID
+     * @return 日志详情
      */
     OptionLog selectById(@Param("id") String id);
 
     /**
      * 操作类型查询
-     * @return
+     * @return 操作类型列表
      */
     List<String> operateOption();
+
+    /**
+     * 创建表，如果不存在则创建
+     * @param tableName 表名
+     * @return 创建结果
+     */
+    Integer createTableIfNotExists(@Param("tableName") String tableName);
+
+    /**
+     * 查询年份
+     * @return 年份列表
+     */
+    List<String> operateYearOption();
 }

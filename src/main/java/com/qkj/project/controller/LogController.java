@@ -36,4 +36,9 @@ public class LogController {
     public List<String> operateOption() {
         return optionLogService.operateOption();
     }
+
+    @GetMapping("/year_option")
+    public List<String> operateYearOption() {
+        return optionLogService.operateYearOption();
+    }
 }

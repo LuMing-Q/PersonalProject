@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author KeJiang Qi
  * @date 2024/8/20 - 15:15
- * @description 日志业务处理类
+ * @description 日志业务接口类
  */
 public interface LogService {
     /**
@@ -33,4 +33,10 @@ public interface LogService {
      * @return
      */
     List<String> operateOption();
+
+    /**
+     * 操作年份下拉数据
+     * @return List<String>
+     */
+    List<String> operateYearOption();
 }

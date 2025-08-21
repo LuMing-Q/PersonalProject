@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author KeJiang Qi
  * @date 2024/8/20 - 15:18
- * @description
+ * @description 日志服务实现类
  */
 @Service
 public class LogServiceImpl implements LogService {
@@ -37,5 +39,12 @@ public class LogServiceImpl implements LogService {
     @Override
     public List<String> operateOption() {
         return optionLogDao.operateOption();
+    }
+
+    @Override
+    public List<String> operateYearOption() {
+        List<String> years = optionLogDao.operateYearOption();
+        return years.stream().map(s -> s.substring(s.length() - 4)).
+                sorted(Comparator.reverseOrder()).collect(Collectors.toList());
     }
 }

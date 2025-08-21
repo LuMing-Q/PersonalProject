@@ -25,6 +25,12 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String complexFileUpload(Map<String, Object> request) {
+        request.forEach((key, value) -> {
+            if (value instanceof MultipartFile) {
+                MultipartFile file = (MultipartFile) value;
+                // 文件上传操作
+            }
+        });
         //文件以及数据处理操作
         return "上传成功";
     }

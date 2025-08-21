@@ -10,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -21,20 +23,46 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.zip.CRC32;
 
 /**
  * @author KeJiang Qi
- * @date 2024/8/20
- * @description 工具类
+ * @date 2025/2/21 - 15:40
+ * @description 基础工具类，提供一些常用的方法封装
  */
 @Slf4j
 public class BaseUtil {
+
+    private static SnowflakeId snowflakeId;
+
+    static {
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+            byte[] ip = address.toString().getBytes(StandardCharsets.UTF_8);
+            CRC32 crc32 = new CRC32();
+            crc32.update(ip, 0, ip.length);
+            long value = crc32.getValue();
+            snowflakeId = new SnowflakeId(value % 32, 31);
+        } catch (UnknownHostException e) {
+            log.warn("Unknown Host Exception ---- {}", e.getMessage());
+            snowflakeId = new SnowflakeId(31, 30);
+        }
+    }
+
     /**
      * 获取uuid，去除-，转成小写
      * @return uuid
      */
     public static String uuid() {
         return UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
+    }
+
+    /**
+     * 生成雪花Id
+     * @return {@link Long}
+     */
+    public static long snowflakeId() {
+        return snowflakeId.generate();
     }
 
     /**
@@ -70,7 +98,7 @@ public class BaseUtil {
      * 反序列化成 {JSONObject} 对象
      * 如果参数为空，则返回空对象{}
      * @param str json字符串
-     * @return
+     * @return {@link JSONObject} 对象
      */
     public static JSONObject parseJson(String str) {
         return isEmpty(str) ? new JSONObject() : JSON.parseObject(str);
@@ -79,7 +107,7 @@ public class BaseUtil {
     /**
      * 生成JSONArray并且加入元素e
      * @param e 元素
-     * @return
+     * @return {@link JSONArray} 生成的对象
      */
     public static JSONArray as(Object... e) {
         JSONArray j = new JSONArray();
@@ -101,6 +129,8 @@ public class BaseUtil {
 
     /**
      * Base64加密
+     * @param src 源字符串
+     * @return 加密后的字符串
      */
     public static String base64encode(String src) {
         return Base64.getEncoder().encodeToString(src.getBytes(StandardCharsets.UTF_8));
@@ -108,6 +138,8 @@ public class BaseUtil {
 
     /**
      * Base64加密
+     * @param bytes 字节数组
+     * @return 加密后的字符串
      */
     public static String base64encode(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
@@ -115,6 +147,9 @@ public class BaseUtil {
 
     /**
      * Base64解密
+     * @param src 源字符串
+     * @param charset 字符集
+     * @return 解密后的字符串
      */
     public static String base64decode(String src, Charset charset) {
         return new String(Base64.getDecoder().decode(src), charset);
@@ -122,6 +157,8 @@ public class BaseUtil {
 
     /**
      * Base64解密
+     * @param str 源字符串
+     * @return 解密后的字节数组
      */
     public static byte[] base64decode(String str) {
         return Base64.getDecoder().decode(str);
@@ -129,6 +166,8 @@ public class BaseUtil {
 
     /**
      * URL编码
+     * @param src 源字符串
+     * @return 加密后的字符串
      */
     public static String urlEncode(String src) {
         try { return URLEncoder.encode(src, "UTF-8"); }
@@ -140,6 +179,8 @@ public class BaseUtil {
 
     /**
      * URL解码
+     * @param str 源字符串
+     * @return 解密后的字符串
      */
     public static String urlDecode(String str) {
         try { return URLDecoder.decode(str, "UTF-8"); }
@@ -151,6 +192,9 @@ public class BaseUtil {
 
     /**
      * AES加密
+     * @param src 源字符串
+     * @param key 密钥
+     * @return 加密后的字符串
      */
     public static String aesEncrypt(String src, String key) {
         try {
@@ -168,9 +212,9 @@ public class BaseUtil {
 
     /**
      * AES解密
-     * @param str
-     * @param key
-     * @return
+     * @param str 源字符串
+     * @param key 密钥
+     * @return 解密后的字符串
      */
     public static String aesDecrypt(String str, String key) {
         try {
@@ -210,4 +254,19 @@ public class BaseUtil {
         }
     }
 
+    /**
+     * 生成排序字段
+     * @param sort 排序字段字符串，例如：name:1,age:-1
+     * @return 排序字段字符串，例如：name ASC,age DESC<br/>
+     * sql编写时需要用 拼接符 # 不能使用占位符  $<br/>
+     * <img src="https://pic1.imgdb.cn/item/67e0b40d88c538a9b5c54edf.png" alt="image.png">
+     */
+    public static String genSort(String sort) {
+        if (BaseUtil.isEmpty(sort)) { return "name"; }
+        else {
+            return sort.replaceAll(":", " ")
+                    .replaceAll("-\\d+", "DESC")
+                    .replaceAll("\\d+", "ASC");
+        }
+    }
 }
