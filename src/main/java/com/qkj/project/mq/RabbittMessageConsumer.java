@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 /**
  * @author KeJiang Qi
  * @date 2025/7/29 - 9:37
- * @description 报表生成消息消费者
+ * @description MQ消息消费者
  */
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ReportMessageConsumer {
+public class RabbittMessageConsumer {
 
     @RabbitListener(queues = "report.generate.queue")
-    public void handleReportGeneration(String message) {
+    public void handleReportGeneration(RabbitMessage message) {
         log.info("处理逻辑 {}", message);
     }
 }

@@ -23,7 +23,7 @@ public class MinioCfg {
     private String endpoint;
     private String accessKey;
     private String secretKey;
-    private String  bucketName;
+    private String bucketName;
 
     @Bean("minio")
     public MinioClient minioClient() {

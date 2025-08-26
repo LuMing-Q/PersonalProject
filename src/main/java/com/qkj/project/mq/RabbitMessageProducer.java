@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 /**
  * @author KeJiang Qi
  * @date 2025/7/29 - 9:25
- * @description 消息生产者
+ * @description MQ消息生产者
  */
 @Component
 @RequiredArgsConstructor
-public class ReportMessageProducer {
+public class RabbitMessageProducer {
     private final RabbitTemplate rabbitTemplate;
 
-    public void send(String message) {
+    public void send(RabbitMessage message) {
         rabbitTemplate.convertAndSend("report.exchange", "report.generate", message);
     }
 }
