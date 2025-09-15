@@ -76,7 +76,8 @@ public class LogAspect {
         if (BaseUtil.isEmpty(ip)) {
             ip =  request.getRemoteAddr();
         }
-        if (!"GET".equals(request.getMethod())) {
+        String requestMethod = "GET";
+        if (!requestMethod.equals(request.getMethod())) {
             for (Object o : joinPoint.getArgs()) {
                 if (Objects.isNull(o) || o instanceof MultipartFile || o instanceof MultipartFile[]
                         || o instanceof HttpServletRequest || o instanceof HttpServletResponse) {
@@ -92,14 +93,14 @@ public class LogAspect {
                             outMap.put(key, "二进制文件");
                             ars.add(outMap);
                         }
-                        // 不做处理
-                        continue;
                     }
                 }
                 ars.add(o);
             }
         }
-        log.info("|====> ip: {} {} {} body = {}", ip, request.getMethod(), BaseUtil.isEmpty(query) ? uri : uri + "?" + query, new JsonMapper().registerModule(new JavaTimeModule()).writeValueAsString(ars));
+        log.info("\n|=====================> {} ip: {} {} \nbody:\t {} \n", request.getMethod(), ip,
+                BaseUtil.isEmpty(query) ? uri : uri + "?" + query,
+                new JsonMapper().registerModule(new JavaTimeModule()).writeValueAsString(ars));
     }
 
     /**

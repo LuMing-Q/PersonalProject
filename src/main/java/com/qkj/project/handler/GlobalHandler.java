@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -145,16 +146,25 @@ public class GlobalHandler implements ResponseBodyAdvice<Object> {
         log.error("server error: {}", ex.getMessage(), ex);
         Throwable cause = ex;
         while (cause != null) {
-            // 查询告警消息表是否存在，如果不存在则返回404错误码和相应信息
-            if (cause instanceof SQLSyntaxErrorException &&
-                    (cause.getMessage() != null &&
-                            (cause.getMessage().contains("Table 'qkj_project.t_option_log_")) &&
-                            cause.getMessage().contains("doesn't exist"))) {
-                return Result.of(StatusCode.CODE_404.getCode(), "当前年份暂无数据，请切换其他年份", cause.getMessage());
+            // 查询告警消息表是否存在，如果不存在则返回 404 错误码和相应信息
+            if (isMissingOptionLogTable(cause)) {
+                return Result.of(StatusCode.CODE_404.getCode(),
+                        "当前年份暂无数据，请切换其他年份",
+                        cause.getMessage());
             }
             cause = cause.getCause();
         }
         return Result.of(StatusCode.CODE_500.getCode(), "服务异常", ex.getMessage());
+    }
+
+    private boolean isMissingOptionLogTable(Throwable cause) {
+        if (!(cause instanceof SQLSyntaxErrorException)) {
+            return false;
+        }
+        String msg = cause.getMessage();
+        return msg != null &&
+                msg.contains("Table 'qkj_project.t_option_log_") &&
+                msg.contains("doesn't exist");
     }
 
     /**
@@ -164,7 +174,8 @@ public class GlobalHandler implements ResponseBodyAdvice<Object> {
      * @return true 如果当前的 ResponseBodyAdvice 适用于给定的Controller方法的返回类型和媒体类型，否则为 false
      */
     @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(@Nullable MethodParameter returnType,
+                            @Nullable Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
@@ -178,23 +189,18 @@ public class GlobalHandler implements ResponseBodyAdvice<Object> {
      * @param response HTTP响应对象
      * @return 处理后的响应体对象，可以是原始的body或者经过包装的Result对象
      */
-
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                  ServerHttpRequest request, ServerHttpResponse response) {
-        String url = request.getURI().getPath();
-        if (url.contains("/actuator")) { return body; }
+    public Object beforeBodyWrite(Object body, @Nullable MethodParameter returnType, @Nullable MediaType selectedContentType,
+                                  @Nullable Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  @Nullable ServerHttpRequest request, @Nullable ServerHttpResponse response) {
         if (body instanceof LinkedHashMap) {
             LinkedHashMap<?, ?> map = (LinkedHashMap<?, ?>) body;
             Object statusObj = map.get("status");
             Object errorObj = map.get("error");
             Object pathObj = map.get("path");
-
             Integer status = statusObj != null ? Integer.valueOf(statusObj.toString()) : null;
             String error = errorObj != null ? errorObj.toString() : "";
             String path = pathObj != null ? pathObj.toString() : "";
-
             if (status != null) {
                 return Result.of(status, "请求失败", error + "  " + path);
             } else {
@@ -203,7 +209,7 @@ public class GlobalHandler implements ResponseBodyAdvice<Object> {
         }
         /*
          * 当 Controller的方法返回值类型为 String 时报错原因
-         *      HttpMessageConverter使用的是 StringHttpMessageConverter，如果将响应体包装为Result后，自然会报java.lang.ClassCastException异常
+         * HttpMessageConverter使用的是 StringHttpMessageConverter，如果将响应体包装为Result后，自然会报java.lang.ClassCastException异常
          */
         if (body instanceof String){
             return JSON.toJSONString(Result.ok(body));

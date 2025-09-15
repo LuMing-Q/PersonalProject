@@ -24,6 +24,7 @@ public class MinioCfg {
     private String accessKey;
     private String secretKey;
     private String bucketName;
+    private String zipBucketName;
 
     @Bean("minio")
     public MinioClient minioClient() {
@@ -32,6 +33,8 @@ public class MinioCfg {
                 .credentials(accessKey, secretKey)
                 .httpClient(new OkHttpClient.Builder()
                         .connectTimeout(600, TimeUnit.SECONDS)
+                        .readTimeout(600, TimeUnit.SECONDS)
+                        .writeTimeout(600, TimeUnit.SECONDS)
                         .build())
                 .build();
     }

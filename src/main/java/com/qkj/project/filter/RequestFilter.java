@@ -62,7 +62,6 @@ public class RequestFilter implements Filter {
             chain.doFilter(servletRequest, servletResponse);
             return;
         }
-        log.info("header names ===  {}, method === {}", JSON.toJSONString(request.getHeaderNames()), method);
         // token 存放在接口请求参数中的接口
         boolean b = authConfig.queryUrlsContain(uri);
         String token = b ? request.getParameter("Authorization") : request.getHeader("Authorization");
@@ -85,7 +84,6 @@ public class RequestFilter implements Filter {
             return;
         }
         value.setToken(token);
-        log.info("Authorization  = {}", token);
         chain.doFilter(servletRequest, servletResponse);
     }
 

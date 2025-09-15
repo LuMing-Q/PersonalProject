@@ -22,7 +22,7 @@ public class RabbitConfig {
     private String password;
     private String virtualHost;
 
-    @Bean
+    @Bean("mqConnectionFactory")
     public ConnectionFactory rabbitConnectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(host);

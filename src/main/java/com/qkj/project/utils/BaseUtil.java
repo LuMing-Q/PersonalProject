@@ -16,12 +16,14 @@ import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
@@ -34,6 +36,22 @@ import java.util.zip.CRC32;
 public class BaseUtil {
 
     private static SnowflakeId snowflakeId;
+
+    /** 允许的文件名字符：禁止 Windows 非法字符 <>:"/\|?* */
+    private static final Pattern SAFE_FILE_NAME = Pattern.compile("^[^<>:\"/\\\\|?*]+$");
+
+    /**
+     * 校验多层文件夹路径
+     * 允许 /文件夹1/文件夹2 格式，支持中文、空格、数字、下划线、中划线、点号
+     * 自动去除首尾多余的 "/"，防止路径穿越
+     */
+    private static final Pattern SAFE_FOLDER_NAME = Pattern.compile("^[^<>:\"/\\\\|?*]+$");
+
+
+    /**
+     * 文件名/文件夹名 最大长度
+     */
+    private static final int MAX_FILENAME_LENGTH = 255;
 
     static {
         try {
@@ -117,14 +135,14 @@ public class BaseUtil {
 
     /**
      * 生成JSONObject并且加入元素k,v
-     * @param k 元素key
-     * @param v 元素value
-     * @return {@link JSONObject} 生成的对象
+     * @param key 键
+     * @param value 元素value
+     * @return 生成的 JSONObject对象
      */
-    public static JSONObject asJSONObject(String k, Object v) {
-        JSONObject j = new JSONObject();
-        j.put(k, v);
-        return j;
+    public static JSONObject generateJson(String key, Object value) {
+        JSONObject result = new JSONObject();
+        result.put(key, value);
+        return result;
     }
 
     /**
@@ -262,11 +280,65 @@ public class BaseUtil {
      * <img src="https://pic1.imgdb.cn/item/67e0b40d88c538a9b5c54edf.png" alt="image.png">
      */
     public static String genSort(String sort) {
-        if (BaseUtil.isEmpty(sort)) { return "name"; }
+        if (BaseUtil.isEmpty(sort)) {
+            throw BusinessException.of(StatusCode.CODE_400, "排序字段不能为空");
+        }
         else {
             return sort.replaceAll(":", " ")
                     .replaceAll("-\\d+", "DESC")
                     .replaceAll("\\d+", "ASC");
         }
+    }
+
+    /**
+     * 校验单个文件名
+     */
+    public static String fileNameValidator(String fileName) {
+        if (isEmpty(fileName)) {
+            throw BusinessException.of(StatusCode.CODE_400, "文件名不能为空");
+        }
+        // 去掉任何路径，只保留文件名
+        String normalized = Paths.get(fileName).getFileName().toString();
+        // 长度限制
+        if (normalized.length() > MAX_FILENAME_LENGTH) {
+            throw BusinessException.of(StatusCode.CODE_400, "文件名过长");
+        }
+        // 校验非法字符
+        if (!SAFE_FILE_NAME.matcher(normalized).matches()) {
+            throw BusinessException.of(StatusCode.CODE_400, "非法文件名: " + normalized);
+        }
+        return normalized;
+    }
+
+    public static String folderPathValidator(String folderPath) {
+        if (isEmpty(folderPath)) {
+            throw BusinessException.of(StatusCode.CODE_400, "文件路径不能为空");
+        }
+        String normalized = folderPath.replace("\\", "/");
+        // 去掉首尾多余的 "/"
+        if (normalized.startsWith("/")) {
+            normalized = normalized.substring(1);
+        }
+        if (normalized.endsWith("/")) {
+            normalized = normalized.substring(0, normalized.length() - 1);
+        }
+        // 检查路径穿越
+        if (normalized.contains("..")) {
+            throw BusinessException.of(StatusCode.CODE_400, "禁止路径穿越: " + normalized);
+        }
+        // 逐级校验文件夹名
+        String[] parts = normalized.split("/");
+        for (String part : parts) {
+            if (isEmpty(part)) {
+                throw BusinessException.of(StatusCode.CODE_400, "非法路径: " + normalized);
+            }
+            if (part.length() > MAX_FILENAME_LENGTH) {
+                throw BusinessException.of(StatusCode.CODE_400, "文件夹名过长: " + part);
+            }
+            if (!SAFE_FOLDER_NAME.matcher(part).matches()) {
+                throw BusinessException.of(StatusCode.CODE_400, "非法文件夹名: " + part);
+            }
+        }
+        return normalized;
     }
 }
