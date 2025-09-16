@@ -11,13 +11,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/qkj_project?useUnicode = true&characterEncoding = utf8&useSSL = false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
+    password: 12345678
   redis:
     host: 127.0.0.1
     port: 6379
     password: 123456
   rabbitmq:
-    host: 192.168.100.132
+    host: 127.0.0.1
     port: 5672
     username: admin
     password: Admin@123
@@ -25,7 +25,7 @@ spring:
 
 logging:
   level:
-    com.qkj.project: DEBUG # 返回日志级别
+    com.qkj.project: INFO # 返回日志级别
 
 # 路径拦截
 auth:
@@ -40,11 +40,23 @@ auth:
 
 # minio 存储地址
 unify:
+#  minio:
+#    endpoint: http://127.0.0.1:9000
+#    accessKey: admin
+#    secretKey: Admin@123
+#    bucketName: personal-bucket
+#    zipBucketName: zip-bucket
+#  minio:
+#    endpoint: http://192.168.51.156:9001
+#    accessKey: minioadmin
+#    secretKey: Admin@123
+#    bucketName: test-bucket
+#    zipBucketName: test-bucket
   minio:
-    endpoint: http://13.11.100.52:31506 # 易智瑞
-    accessKey: minioAdmin
-    secretKey: Admin@123
-    bucketName: personal-minio
+    endpoint: http://13.11.102.254:6188  # 附件存储
+    accessKey: yIi2K47J0Blpgz7xLQE0
+    secretKey: MPGGpvUVIwhDvwqmbD7HV70pxUS2YY4SgVcCLwvw
+    bucketName: sharex-dev
 
 # 异步任务线程池配置
 task:

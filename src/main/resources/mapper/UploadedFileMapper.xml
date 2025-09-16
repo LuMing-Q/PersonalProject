@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qkj.project.dao.UploadedFileDao">
+    <resultMap id="BaseUploadedFile" type="com.qkj.project.entity.UploadedFile">
+        <id column="id" property="id"/>
+        <result column="file_hash" property="fileHash"/>
+        <result column="file_name" property="fileName"/>
+        <result column="path" property="path"/>
+        <result column="size" property="size"/>
+        <result column="uploaded_chunks" property="uploadedChunks"/>
+        <result column="status" property="status"/>
+        <result column="folder" property="folder"/>
+        <result column="parent_path" property="parentPath"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <insert id="save" parameterType="com.qkj.project.entity.UploadedFile">
+        INSERT INTO t_uploaded_files
+        (id, file_hash, file_name, path, size, uploaded_chunks, status, folder, parent_path, create_time)
+        VALUES
+            (#{id}, #{fileHash}, #{fileName}, #{path}, #{size}, #{uploadedChunks}, #{status}, #{folder}, #{parentPath}, #{createTime})
+            ON DUPLICATE KEY UPDATE
+                                 file_name = VALUES(file_name),
+                                 size = VALUES(size),
+                                 uploaded_chunks = VALUES(uploaded_chunks),
+                                 status = VALUES(status),
+                                 folder = VALUES(folder),
+                                 parent_path = VALUES(parent_path),
+                                 update_time = NOW();
+
+    </insert>
+
+    <select id="findAll" resultMap="BaseUploadedFile">
+        select * from t_uploaded_files
+    </select>
+
+    <select id="findByPathAndHash" resultMap="BaseUploadedFile">
+        select * from t_uploaded_files
+        <where>
+            <if test="path != null and path != ''">
+                AND path = #{path}
+            </if>
+            <if test="fileHash != null and fileHash != ''">
+                AND file_hash = #{fileHash}
+            </if>
+        </where>
+    </select>
+
+    <select id="findByFileHash" resultMap="BaseUploadedFile">
+        select * from t_uploaded_files where file_hash = #{fileHash}
+    </select>
+
+</mapper>
