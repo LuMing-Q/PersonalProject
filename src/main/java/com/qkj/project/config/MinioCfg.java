@@ -24,7 +24,6 @@ public class MinioCfg {
     private String accessKey;
     private String secretKey;
     private String bucketName;
-    private String zipBucketName;
 
     @Bean("minio")
     public MinioClient minioClient() {

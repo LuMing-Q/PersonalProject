@@ -44,10 +44,8 @@ public class MenuController {
     }
 
     @GetMapping
-    public Page<Menu> getList(@RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
-        return menuService.getList(name, page, size);
+    public List<Menu> getListByName(@RequestParam(value = "name", required = false) String name) {
+        return menuService.getListByName(name);
     }
 
     @DeleteMapping("/{menu_id}")

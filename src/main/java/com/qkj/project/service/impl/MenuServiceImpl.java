@@ -10,6 +10,7 @@ import com.qkj.project.vo.RoleMenuGrantVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,16 +61,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public Page<Menu> getList(String name, int page, int size) {
-        int total = menuDao.getCount(name);
-        List<Menu> list = menuDao.getList(name, (page - 1) * size, size);
-        return Page.of(total, page, list);
+    public List<Menu> getListByName(String name) {
+        return menuDao.getListByName(name);
     }
 
-    /**
-     * @param menuId
-     * @return
-     */
     @Override
     public int deleteMenuByMenuId(String menuId) {
         return menuDao.deleteMenuByMenuId(menuId);

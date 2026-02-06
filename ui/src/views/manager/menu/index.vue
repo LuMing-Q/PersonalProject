@@ -16,6 +16,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column label="上级菜单" prop="parentName" show-overflow-tooltip/>
+				<el-table-column label="菜单路径" prop="path" show-overflow-tooltip/>
 				<el-table-column label="操作" align="center" :width="autoSize(280)">
 					<template #default="scope">
 						<div style="display: flex;">
@@ -65,13 +66,13 @@ const getData = async () => {
 	const res = await getPage(param.value);
 	const arr = [];
 	const arr2 = [];
-	if (res.data && res.data.length >= 0) {
-		res.data.forEach(el => {
+	if (res && res.length >= 0) {
+		res.forEach(el => {
 			arr2.push({ value: el.id, label: el.name, id: el.id, parent_id: el.parent_id });
 			if (el.parent_id === '-1') {
 				arr.push({ ...el, parentName: '根目录' });
 			} else {
-				arr.push({ ...el, parentName: res.data.find(e => e.id === el.parent_id)?.name });
+				arr.push({ ...el, parentName: res.find(e => e.id === el.parent_id)?.name });
 			}
 		});
 		// 平面结构

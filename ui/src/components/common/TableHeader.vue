@@ -36,9 +36,9 @@
 							start-placeholder="开始时间"
 							end-placeholder="结束时间" />
 						<!-- 输入框 -->
-						<el-input v-else 
-							v-model="ruleForm[item.field]" 
-							:maxlength="64" :placeholder="`请输入${item.label}`" 
+						<el-input v-else
+							v-model="ruleForm[item.field]" :maxlength="64"
+							:placeholder="`请输入${item.label}`" clearable
 							@blur="ruleForm[item.field]=$event.target.value.trim()">
 						</el-input>
 					</div>

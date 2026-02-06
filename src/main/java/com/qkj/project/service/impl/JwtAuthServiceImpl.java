@@ -9,6 +9,7 @@ import cn.hutool.jwt.signers.JWTSigner;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import com.qkj.project.common.Online;
 import com.qkj.project.common.RequestHolder;
+import com.qkj.project.common.enumerations.VerifyResult;
 import com.qkj.project.dao.UserDao;
 import com.qkj.project.entity.User;
 import com.qkj.project.service.AuthService;
@@ -74,7 +75,7 @@ public class JwtAuthServiceImpl implements AuthService {
 
     @Override
     public void logout() {
-        /**
+        /*
          * jwt 生成 token 超时后失效，所以不需要退出登录
          * todo 如果必须要退出可以将 userId和online 存储到 redis,退出时再将此项信息删除
          */
@@ -82,28 +83,29 @@ public class JwtAuthServiceImpl implements AuthService {
 
     /**
      * jwt token解析
-     * @param token
-     * @return 1-Token 格式异常,2-Token 解析失败,3-Token 已过期,4-用户不存在
+     * @param token 登录凭证
+     * @return 校验结果
      */
-    public int verify(String token) {
+    @Override
+    public VerifyResult verify(String token) {
         token = token.replace("Bearer ", "");
         String[] parts = token.split("\\.");
         if (parts.length != 3) {
-            return 1;
+            return VerifyResult.INVALID_FORMAT;
         }
         X509EncodedKeySpec spec = new X509EncodedKeySpec(BaseUtil.base64decode(publicKey));
         PublicKey rsa = SecureUtil.generatePublicKey("RSA", spec);
         JWTSigner signer = JWTSignerUtil.rs256(rsa);
         try {
-            if (!JWTUtil.verify(token, signer)) { return 2; }
+            if (!JWTUtil.verify(token, signer)) { return VerifyResult.PARSE_FAILED; }
             // jwt被手动修改，校验失败异常处理
         } catch (JSONException e) {
-            return 2;
+            return VerifyResult.PARSE_FAILED;
         }
         JWT jwt = JWTUtil.parseToken(token);
         NumberWithFormat exp = (NumberWithFormat) jwt.getPayload("exp");
         if (System.currentTimeMillis() / 1000 >= exp.longValue()) {
-            return 3;
+            return VerifyResult.EXPIRED;
         }
         String userId = (String) jwt.getPayload("uid");
         User user = userDao.selectLoginById(userId);
@@ -113,8 +115,8 @@ public class JwtAuthServiceImpl implements AuthService {
             Online online = new Online(token, user);
             value.setOnline(online);
             RequestHolder.add(value);
-            return 0;
+            return VerifyResult.SUCCESS;
         }
-        return 4;
+        return VerifyResult.USER_NOT_FOUND;
     }
 }

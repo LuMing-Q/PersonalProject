@@ -89,7 +89,7 @@ public class BaseUtil {
      * @return 判断结果 null 或者 ""的时候返回 true 否则返回 false
      */
     public static boolean isEmpty(String str) {
-        return str == null || "".equals(str);
+        return str == null || str.isEmpty();
     }
 
     /**

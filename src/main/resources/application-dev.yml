@@ -40,23 +40,21 @@ auth:
 
 # minio 存储地址
 unify:
-#  minio:
-#    endpoint: http://127.0.0.1:9000
-#    accessKey: admin
-#    secretKey: Admin@123
-#    bucketName: personal-bucket
-#    zipBucketName: zip-bucket
+  minio:
+    endpoint: http://127.0.0.1:9000
+    accessKey: admin
+    secretKey: Admin@123
+    bucketName: personal-bucket
 #  minio:
 #    endpoint: http://192.168.51.156:9001
 #    accessKey: minioadmin
 #    secretKey: Admin@123
 #    bucketName: test-bucket
-#    zipBucketName: test-bucket
-  minio:
-    endpoint: http://13.11.102.254:6188  # 附件存储
-    accessKey: yIi2K47J0Blpgz7xLQE0
-    secretKey: MPGGpvUVIwhDvwqmbD7HV70pxUS2YY4SgVcCLwvw
-    bucketName: sharex-dev
+#  minio:
+#    endpoint: http://13.11.102.254:6188  # 附件存储
+#    accessKey: yIi2K47J0Blpgz7xLQE0
+#    secretKey: MPGGpvUVIwhDvwqmbD7HV70pxUS2YY4SgVcCLwvw
+#    bucketName: sharex-dev
 
 # 异步任务线程池配置
 task:

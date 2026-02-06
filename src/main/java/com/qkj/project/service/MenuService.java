@@ -14,51 +14,49 @@ import java.util.List;
 public interface MenuService {
     /**
      * 根据角色id查询所有菜单列表
-     * @param roleId
-     * @return
+     * @param roleId 角色id
+     * @return 菜单列表
      */
     List<Menu> getMenuListByRoleId(String roleId);
 
     /**
      * 添加菜单
-     * @param menu
-     * @return
+     * @param menu 菜单
+     * @return 新建结果
      */
     int addMenu(Menu menu);
 
     /**
      * 编辑菜单
-     * @param menu
-     * @return
+     * @param menu 菜单
+     * @return 编辑结果
      */
     int editMenu(Menu menu);
 
     /**
      * 角色菜单分配
-     * @param menuGrant
-     * @return
+     * @param menuGrant 角色菜单授权VO
+     * @return 授权结果
      */
     int addRoleMenu(RoleMenuGrantVO menuGrant);
 
     /**
-     * 查询菜单分页列表
-     * @param name
-     * @param page
-     * @param size
-     * @return
+     * 根据 name 筛选菜单列表
+     * @param name 菜单名称
+     * @return 菜单列表
      */
-    Page<Menu> getList(String name, int page, int size);
+    List<Menu> getListByName(String name);
 
     /**
      * 根据菜单id删除菜单
-     * @param menuId
-     * @return
+     * @param menuId 菜单id
+     * @return 删除结果
      */
     int deleteMenuByMenuId(String menuId);
 
     /**
      * 查询所有菜单列表
-     * @return
+     * @return 所有菜单
      */
     List<Menu> getAll();
 }

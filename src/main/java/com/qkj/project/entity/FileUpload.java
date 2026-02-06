@@ -35,4 +35,9 @@ public class FileUpload {
      * 文件类型
      */
     private String fileType;
+
+    /**
+    * 文件s3路径
+     */
+    private String fileUrl;
 }

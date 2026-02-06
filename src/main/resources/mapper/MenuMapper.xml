@@ -92,7 +92,7 @@
         </where>
     </select>
 
-    <select id="getList" resultMap="BaseMenu">
+    <select id="getListByName" resultMap="BaseMenu">
         select * from t_menu
         <where>
             <if test="name != null and name != '' ">
@@ -100,7 +100,6 @@
             </if>
         </where>
         ORDER BY `level`, sort ASC
-        LIMIT #{page}, #{size}
     </select>
 
     <delete id="deleteRoleMenuByRoleId">

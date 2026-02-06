@@ -1,6 +1,5 @@
-/*
- * @LastEditTime: 2024-8-20
- * @Description: 异步请求服务
+/**
+ * @description: 异步请求服务
  */
 import { request } from '@/utils';
 

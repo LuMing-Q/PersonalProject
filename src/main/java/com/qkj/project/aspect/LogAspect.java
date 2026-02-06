@@ -1,8 +1,9 @@
 package com.qkj.project.aspect;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.qkj.project.common.RequestHolder;
 import com.qkj.project.common.Result;
@@ -12,6 +13,7 @@ import com.qkj.project.dao.OptionLogDao;
 import com.qkj.project.entity.OptionLog;
 import com.qkj.project.utils.BaseUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -58,6 +60,13 @@ public class LogAspect {
     public void checkUserIdPointcut() {}
 
     /**
+     * 复用ObjectMapper（线程安全，可配置）
+     */
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+    /**
      * 日志记录前置通知，用于拦截Controller层记录用户的操作
      * @param joinPoint 切入点对象
      */
@@ -65,19 +74,25 @@ public class LogAspect {
     @Before("checkUserIdPointcut()")
     public void check(JoinPoint joinPoint) throws JsonProcessingException {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) {
-            return;
-        }
+        if (attributes == null) { return; }
         HttpServletRequest request = attributes.getRequest();
+        // 提取IP
+        String ip = Optional.ofNullable(request.getHeader("x-forwarded-for"))
+                .filter(StringUtils::isNotBlank)
+                .map(s -> s.split(",")[0].trim())
+                .orElseGet(request::getRemoteAddr);
+        // 构建请求信息
         String uri = request.getRequestURI();
         String query = request.getQueryString();
-        List<Object> ars = new ArrayList<>();
-        String ip = request.getHeader("x-forwarded-for");
-        if (BaseUtil.isEmpty(ip)) {
-            ip =  request.getRemoteAddr();
+        String fullUrl = BaseUtil.isEmpty(query) ? uri : uri + "?" + query;
+        String method = request.getMethod();
+        String getMethod = "GET";
+        if (getMethod.equalsIgnoreCase(method)) {
+            log.info("\n======> {} ip: {} url: {} \n", method, ip, fullUrl);
+            return;
         }
-        String requestMethod = "GET";
-        if (!requestMethod.equals(request.getMethod())) {
+        if (!getMethod.equals(method)) {
+            List<Object> ars = new ArrayList<>();
             for (Object o : joinPoint.getArgs()) {
                 if (Objects.isNull(o) || o instanceof MultipartFile || o instanceof MultipartFile[]
                         || o instanceof HttpServletRequest || o instanceof HttpServletResponse) {
@@ -89,7 +104,7 @@ public class LogAspect {
                     if (map.values().stream().allMatch(MultipartFile.class::isInstance)) {
                         // 数据处理
                         for (Object key : map.keySet()) {
-                            Map<Object, String> outMap = new HashMap<>();
+                            Map<Object, String> outMap = new HashMap<>(20);
                             outMap.put(key, "二进制文件");
                             ars.add(outMap);
                         }
@@ -97,10 +112,8 @@ public class LogAspect {
                 }
                 ars.add(o);
             }
+            log.info("\n======> {} ip: {} url: {} \n body: {} \n", request.getMethod(), ip, fullUrl, OBJECT_MAPPER.writeValueAsString(ars));
         }
-        log.info("\n|=====================> {} ip: {} {} \nbody:\t {} \n", request.getMethod(), ip,
-                BaseUtil.isEmpty(query) ? uri : uri + "?" + query,
-                new JsonMapper().registerModule(new JavaTimeModule()).writeValueAsString(ars));
     }
 
     /**
@@ -177,6 +190,7 @@ public class LogAspect {
      * @return boolean
      */
     private boolean isFilterParam(Object o) {
+        if (o == null) { return false; }
         return o instanceof MultipartFile ||
                 o instanceof ServletRequest ||
                 o instanceof ServletResponse ||

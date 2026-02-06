@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RabbittMessageConsumer {
+public class RabbitMessageConsumer {
 
     @RabbitListener(queues = "report.generate.queue")
     public void handleReportGeneration(RabbitMessage message) {

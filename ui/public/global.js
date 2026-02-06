@@ -1,6 +1,7 @@
 const { location: { hostname, protocol } } = window;
-// 地矿
+
 const port = '2693';
+// const port = '8080';
 const devServer = '127.0.0.1'; 
 
 window.g = {

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.qkj.project.common.RequestHolder;
 import com.qkj.project.common.Result;
 import com.qkj.project.common.enumerations.StatusCode;
+import com.qkj.project.common.enumerations.VerifyResult;
 import com.qkj.project.config.AuthConfig;
 import com.qkj.project.service.AuthService;
 import com.qkj.project.utils.BaseUtil;
@@ -36,9 +37,12 @@ public class RequestFilter implements Filter {
     @Value("${auth.type:default}AuthService")
     private String authType;
 
-    @Autowired
     private Map<String, AuthService> authServiceMap;
 
+    @Autowired
+    private void setAuthServiceMap(Map<String, AuthService> authServiceMap) {
+        this.authServiceMap = authServiceMap;
+    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
@@ -69,18 +73,9 @@ public class RequestFilter implements Filter {
             responseData(StatusCode.CODE_401.getCode(), "Token 不存在", response);
             return;
         }
-        int verify = authServiceMap.get(authType).verify(token);
-        if (verify == 1) {
-            responseData(StatusCode.CODE_401.getCode(), "Token 格式异常", response);
-            return;
-        } else if (verify == 2) {
-            responseData(StatusCode.CODE_401.getCode(), "Token 解析失败", response);
-            return;
-        } else if (verify == 3) {
-            responseData(StatusCode.CODE_401.getCode(), "Token 已过期", response);
-            return;
-        } else if (verify == 4) {
-            responseData(StatusCode.CODE_401.getCode(), "用户不存在", response);
+        VerifyResult verify = authServiceMap.get(authType).verify(token);
+        if (!verify.isSuccess()) {
+            responseData(StatusCode.CODE_401.getCode(), verify.getMessage(), response);
             return;
         }
         value.setToken(token);
