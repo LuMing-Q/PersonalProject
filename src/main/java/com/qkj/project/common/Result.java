@@ -38,8 +38,8 @@ public class Result<T> implements Serializable {
         return of(code, msg, null, data);
     }
 
-    public static <T> Result<T> of(int code, String msg, String errInfo) {
-        return of(code, msg, errInfo, null);
+    public static <T> Result<T> of(int code, String msg, String resultInfo) {
+        return of(code, msg, resultInfo, null);
     }
 
     public static <T> Result<T> of(int code, String msg, String info, T data) {

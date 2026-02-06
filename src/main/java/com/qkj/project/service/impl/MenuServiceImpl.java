@@ -6,10 +6,13 @@ import com.qkj.project.entity.Menu;
 import com.qkj.project.entity.RoleMenu;
 import com.qkj.project.service.MenuService;
 import com.qkj.project.utils.BaseUtil;
+import com.qkj.project.vo.RoleMenuGrantVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author KeJiang Qi
@@ -34,36 +37,41 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public int addRoleMenu(List<RoleMenu> list) {
+    public int editMenu(Menu menu) {
+        if (menu.getType() == 1) {
+            menu.setOpDirective("");
+        }
+        if (!("-1".equals(menu.getParentId()))) {
+            menu.setIcon("");
+        }
+        return menuDao.editMenu(menu);
+    }
+
+    @Override
+    public int addRoleMenu(RoleMenuGrantVO menuGrant) {
+        menuDao.deleteRoleMenuByRoleId(menuGrant.getRoleId());
+        List<String> ids = menuGrant.getIds();
+        if (ids.isEmpty()) {
+            return menuDao.deleteRoleMenuByRoleId(menuGrant.getRoleId());
+        }
+        List<RoleMenu> list = ids.stream().
+                map(m -> new RoleMenu().setId(BaseUtil.uuid()).setRoleId(menuGrant.getRoleId()).setMenuId(m)).
+                collect(Collectors.toList());
         return menuDao.addRoleMenu(list);
     }
 
-    /**
-     * <img src="https://pic.imgdb.cn/item/66e52acad9c307b7e9ada728.webp">
-     * @param name
-     * @param page
-     * @param size
-     * @return
-     */
     @Override
-    public Page<Menu> getList(String name, int page, int size) {
-        int total = menuDao.getCount(name);
-        List<Menu> list = menuDao.getList(name, (page - 1) * size, size);
-        return Page.of(total, page, list);
+    public List<Menu> getListByName(String name) {
+        return menuDao.getListByName(name);
     }
 
-    /**
-     * <img src="https://pic.imgdb.cn/item/66e532e4d9c307b7e9b46b52.jpg" alt="8d362d1d75ff78c872e71e22e00ee4dc.jpg">
-     * @param menuId
-     * @return
-     */
     @Override
     public int deleteMenuByMenuId(String menuId) {
         return menuDao.deleteMenuByMenuId(menuId);
     }
 
     @Override
-    public Integer deleteRoleMenuByRoleId(String roleId) {
-        return menuDao.deleteRoleMenuByRoleId(roleId);
+    public List<Menu> getAll() {
+        return menuDao.getAll();
     }
 }

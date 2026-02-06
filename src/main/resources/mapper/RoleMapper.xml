@@ -7,6 +7,8 @@
         <result column="name" property="name"/>
         <result column="code" property="code"/>
         <result column="create_time" property="createTime"/>
+        <result column="description" property="description"/>
+        <result column="built_in" property="builtIn"/>
     </resultMap>
 
     <insert id="addRole">
@@ -16,12 +18,14 @@
             <if test="name != null and name != ''">`name`,</if>
             <if test="createTime != null">create_time,</if>
             <if test="code != null and code != ''">`code`,</if>
+            <if test="description != null and description != ''">`description`,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null and id != ''">#{id},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="code != null and code != ''">#{code},</if>
+            <if test="description != null and description != ''">#{description},</if>
         </trim>
     </insert>
 
@@ -30,6 +34,7 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">`name` = #{name},</if>
             <if test="code != null and code != ''">`code` = #{code},</if>
+            `description` = #{description}
         </trim>
         where id = #{id}
     </update>
@@ -46,7 +51,7 @@
         SELECT * FROM t_role
         <where>
             <if test="name != null and name != '' ">
-                `name` LIKE CONCAT (#{name},'%')
+                `name` LIKE CONCAT ('%', #{name},'%')
             </if>
         </where>
         ORDER BY create_time DESC
@@ -61,4 +66,9 @@
             </if>
         </where>
     </select>
+
+    <select id="getRoleBuiltIn" resultType="java.lang.Integer">
+        select `built_in` from t_role where `id` = #{id}
+    </select>
+
 </mapper>

@@ -3,6 +3,7 @@ package com.qkj.project.service.impl;
 import com.qkj.project.cache.OnlineCache;
 import com.qkj.project.common.Online;
 import com.qkj.project.common.RequestHolder;
+import com.qkj.project.common.enumerations.VerifyResult;
 import com.qkj.project.dao.UserDao;
 import com.qkj.project.entity.User;
 import com.qkj.project.service.AuthService;
@@ -17,7 +18,7 @@ import java.util.Map;
 /**
  * @author KeJiang Qi
  * @date 2024/8/23 - 11:41
- * @description
+ * @description Redis 认证服务实现类
  */
 @Slf4j
 @Service("redisAuthService")
@@ -49,22 +50,17 @@ public class RedisAuthServiceImpl implements AuthService {
         onlineCache.delOnline(value.getToken());
     }
 
-    /**
-     * redis token解析
-     * @param token
-     * @return 1-Token 格式异常,2-Token 解析失败,3-Token 已过期,4-用户不存在
-     */
     @Override
-    public int verify(String token) {
+    public VerifyResult verify(String token) {
         token = token.replace("Bearer ", "");
         Online online = onlineCache.getOnline(token);
         if (null == online) {
-            return 3;
+            return VerifyResult.EXPIRED;
         }
         User user = online.getUser();
         if (null != user) {
-            return 0;
+            return VerifyResult.SUCCESS;
         }
-        return 4;
+        return VerifyResult.USER_NOT_FOUND;
     }
 }

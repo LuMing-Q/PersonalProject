@@ -1,44 +1,55 @@
 // 角色相关接口
 import { get, post, put, remove } from '../index';
 
-const apiPrefix = '/qkj';
+const apiPrefix = '/qkj/roles';
 
 // 获取角色列表
-export const getRoleList = async () => {
+export const getRoleList = async (param) => {
 	try {
-		const list = await get(`${apiPrefix}/roles`);
-		return list;
+		const data = await get(`${apiPrefix}`, param);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}
 };
 
-// 删除菜单
-export const removeRole = async (menuId) => {
+// 添加角色
+export const addRole = async (formData) => {
 	try {
-		const list = await remove(`${apiPrefix}/menus/${menuId}`);
-		return list;
+		const data = await post(`${apiPrefix}`, {}, formData);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}
 };
 
-// 新建菜单
-export const addMenu = async (formData) => {
+// 编辑角色
+export const editRole = async (formData) => {
 	try {
-		const list = await post(`${apiPrefix}/menus`, {}, formData);
-		return list;
+		const data = await put(`${apiPrefix}`, {}, formData);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}
 };
 
-// 修改菜单
-export const editMenu = async (formData) => {
+// 删除角色
+export const removeRole = async (id) => {
 	try {
-		const res = await put(`${apiPrefix}/menus`, {}, formData);
-		return res;
+		const data = await remove(`${apiPrefix}`, id);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}
 };
+
+// 获取所有角色 
+export const getAllRole = async (param) => {
+	try {
+		const data = await get(`${apiPrefix}/all`, param);
+		return data;
+	} catch (err) {
+		console.log(err);
+	}
+};
+

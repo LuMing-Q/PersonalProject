@@ -46,7 +46,7 @@ public enum StatusCode {
     public int getCode() {
         return this.code;
     }
-    public static StatusCode valueof(int code) {
+    public static StatusCode valueOf(int code) {
         return Stream.of(values()).filter(v -> v.getCode() == code).findFirst().orElse(null);
     }
     public boolean eq(int code) {

@@ -3,7 +3,7 @@ package com.qkj.project.common.constant;
 /**
  * @author KeJiang Qi
  * @date 2024/8/23 - 14:11
- * @description
+ * @description 缓存键值常量类
  */
 public class RedisKey {
 

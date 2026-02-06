@@ -1,6 +1,7 @@
 package com.qkj.project.entity;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author KeJiang Qi
@@ -8,8 +9,9 @@ import lombok.Data;
  * @description 角色菜单关联实体类
  */
 @Data
+@Accessors(chain = true)
 public class RoleMenu {
     private String id;
     private String roleId;
-    private int menuId;
+    private String menuId;
 }

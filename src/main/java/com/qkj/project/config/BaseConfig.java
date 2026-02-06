@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 public class BaseConfig {
 
     /**
-     * 不能  发起 https 请求，可以传输文件
+     * 不能发起 https 请求，可以传输文件
      * @return
      */
     @Bean("httpRestTemplate")
@@ -67,7 +67,8 @@ public class BaseConfig {
     }
 
     /**
-     * 日志生成(日志收集)执行器
+     * 日志生成线程池<br>
+     * <img src="https://pic.imgdb.cn/item/67243c68d29ded1a8ce6fab9.png">
      * @return
      */
     @Bean("logExecutorService")
@@ -76,9 +77,10 @@ public class BaseConfig {
     }
 
     /**
-     * redis 自定义序列化器
-     * @param factory
-     * @return
+     * 配置Redis模板，使用自定义序列化器
+     *
+     * @param factory Redis连接工厂，用于创建Redis连接
+     * @return 配置好的Redis模板实例
      */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
@@ -86,6 +88,13 @@ public class BaseConfig {
         template.setConnectionFactory(factory);
         template.setKeySerializer(new StringRedisSerializer());
         RedisSerializer<Object> redisSerializer = new RedisSerializer<Object>() {
+            /**
+             * 将对象序列化为字节数组
+             *
+             * @param t 要序列化的对象
+             * @return 序列化后的字节数组
+             * @throws SerializationException 序列化异常
+             */
             @Override
             public byte[] serialize(Object t) throws SerializationException {
                 if (t == null) {
@@ -97,6 +106,13 @@ public class BaseConfig {
                 return JSON.toJSONString(t).getBytes(StandardCharsets.UTF_8);
             }
 
+            /**
+             * 将字节数组反序列化为字符串
+             *
+             * @param bytes 要反序列化的字节数组
+             * @return 反序列化后的字符串
+             * @throws SerializationException 反序列化异常
+             */
             @Override
             public String deserialize(byte[] bytes) throws SerializationException {
                 return (bytes == null ? null : new String(bytes, StandardCharsets.UTF_8));

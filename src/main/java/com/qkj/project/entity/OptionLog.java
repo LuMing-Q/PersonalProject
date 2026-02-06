@@ -18,7 +18,7 @@ public class OptionLog {
     private String operate;
     private int status;
     /**
-     * token SHA256加密值 用于识别同一次登录操作
+     * token SHA256加密值 用于识别是否为同一次登录操作
      */
     private String relation;
     private String path;

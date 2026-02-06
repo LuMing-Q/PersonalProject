@@ -7,7 +7,6 @@
       v-model:current-page="page"
       v-model:page-size="size"
       :page-sizes="pageSizes"
-      :disabled="disabled"
       layout="prev, pager, next, sizes, jumper"
       :total="total"
       @size-change="handleSizeChange"
@@ -16,7 +15,8 @@
 </template>
  
 <script setup name="pagination">
-import { defineProps, defineEmits, toRefs, ref, watch } from 'vue';
+import { defineEmits, defineProps, ref, toRefs, watch } from 'vue';
+
 const props = defineProps({
 	total: { type: Number, default: 0 },
 	pageInfo: { type: Number, default: 1 },
@@ -69,7 +69,8 @@ watch(() => props.pageInfo, (val) => {
 		height: 32px;
 		line-height: 32px;
 
-		.total-num {
+		.total-num {																												
+		
 			color: #42A7FF;
 			font-size: 16px;
 			font-weight: 700;

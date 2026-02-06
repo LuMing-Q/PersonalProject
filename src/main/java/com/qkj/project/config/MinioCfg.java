@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,15 +23,17 @@ public class MinioCfg {
     private String endpoint;
     private String accessKey;
     private String secretKey;
-    private String  bucketName;
+    private String bucketName;
 
-    @Bean("minio-config")
+    @Bean("minio")
     public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
                 .httpClient(new OkHttpClient.Builder()
                         .connectTimeout(600, TimeUnit.SECONDS)
+                        .readTimeout(600, TimeUnit.SECONDS)
+                        .writeTimeout(600, TimeUnit.SECONDS)
                         .build())
                 .build();
     }

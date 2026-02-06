@@ -13,7 +13,6 @@ import java.util.List;
  */
 @Mapper
 public interface RoleDao {
-
     /**
      * 角色新增
      * @param role
@@ -57,4 +56,11 @@ public interface RoleDao {
      * @return
      */
     Integer getRoleTotal(@Param("name") String name);
+
+    /**
+     * 通过角色id查询角色是否为内置角色
+     * @param id
+     * @return
+     */
+    Integer getRoleBuiltIn(@Param("id") String id);
 }

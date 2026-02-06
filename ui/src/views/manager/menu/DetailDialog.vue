@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from 'vue';
+import { defineExpose, ref } from 'vue';
 import { isEmpty } from 'lodash';
 import { day } from '@/utils';
 
@@ -35,8 +35,7 @@ const showFields = ref({
 	type: '类别',
 	parentName: '上级菜单',
 	level: '所在层级',
-	path: '页面地址',
-	info: '描述'
+	path: '页面地址'
 });
 
 const onCancel = () => {
@@ -56,4 +55,5 @@ defineExpose({
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/styles/detail.less';
 </style>

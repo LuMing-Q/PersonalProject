@@ -20,5 +20,7 @@ public class Role {
     private String code;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+    private String description;
+    private int builtIn;
     private List<RoleMenu> menus;
 }

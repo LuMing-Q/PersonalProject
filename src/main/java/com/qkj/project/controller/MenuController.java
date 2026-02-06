@@ -1,11 +1,10 @@
 package com.qkj.project.controller;
 
 import com.qkj.project.common.Page;
-import com.qkj.project.common.enumerations.StatusCode;
-import com.qkj.project.common.exception.BusinessException;
 import com.qkj.project.entity.Menu;
-import com.qkj.project.entity.RoleMenu;
 import com.qkj.project.service.MenuService;
+import com.qkj.project.vo.RoleMenuGrantVO;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -34,19 +33,19 @@ public class MenuController {
         return menuService.addMenu(menu);
     }
 
-    @PostMapping("/role")
-    public int addRoleMenu(@RequestBody List<RoleMenu> list) {
-        if (list.isEmpty()) {
-            throw BusinessException.of(StatusCode.CODE_400, "授权菜单不能为空");
-        }
-        return menuService.addRoleMenu(list);
+    @PutMapping
+    public int editMenu(@RequestBody @Valid Menu menu) {
+        return menuService.editMenu(menu);
+    }
+
+    @PutMapping("/role")
+    public int addRoleMenu(@RequestBody @Validated RoleMenuGrantVO menuGrant)  {
+        return menuService.addRoleMenu(menuGrant);
     }
 
     @GetMapping
-    public Page<Menu> getList(@RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
-        return menuService.getList(name, page, size);
+    public List<Menu> getListByName(@RequestParam(value = "name", required = false) String name) {
+        return menuService.getListByName(name);
     }
 
     @DeleteMapping("/{menu_id}")
@@ -54,8 +53,8 @@ public class MenuController {
         return menuService.deleteMenuByMenuId(menuId);
     }
 
-    @DeleteMapping("/role/{role_id}")
-    public Integer deleteRoleMenuByRoleId(@PathVariable("role_id") String roleId) {
-        return menuService.deleteRoleMenuByRoleId(roleId);
+    @GetMapping("/all")
+    public List<Menu> getList() {
+        return menuService.getAll();
     }
 }

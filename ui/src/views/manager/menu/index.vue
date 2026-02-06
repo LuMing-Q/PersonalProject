@@ -1,7 +1,7 @@
 <template>
 	<div class="content-manager">
 	<div class="listWrap listWrap-head_height">
-		<bz-table-header :searchConfig="searchConfig" :is-show-create="true" :type="'菜单'" @onSearch="handleSearch" @onCreate="addClick"></bz-table-header>
+		<table-header :searchConfig="searchConfig" :is-show-create="true" :type="'菜单'" @onSearch="handleSearch" @onCreate="addClick" />
 	</div>
 	<div class="listWrap menuListWrap">
 			<el-table 
@@ -16,7 +16,8 @@
 					</template>
 				</el-table-column>
 				<el-table-column label="上级菜单" prop="parentName" show-overflow-tooltip/>
-				<el-table-column label="操作" align="center" :width="echartsFit(280)">
+				<el-table-column label="菜单路径" prop="path" show-overflow-tooltip/>
+				<el-table-column label="操作" align="center" :width="autoSize(280)">
 					<template #default="scope">
 						<div style="display: flex;">
 							<el-button type="primary" plain @click="drawerClick(scope.row)">
@@ -44,10 +45,10 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
-import { buildTree, echartsFit } from '@/utils'; // 树形结构被注释
+import { onMounted, reactive, ref } from 'vue';
+import { autoSize, buildTree } from '@/utils'; // 树形结构被注释
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { getAllList, removeMenu } from '@/api/manager/menu';
+import { getPage, removeMenu } from '@/api/manager/menu';
 import DetailDialog from './DetailDialog.vue';
 import FormDialog from './FormDialog.vue';
 import { cloneDeep } from 'lodash';
@@ -58,19 +59,20 @@ const searchConfig = reactive([
 	{ type: 'input', field: 'name', label: '菜单名称' }
 ]);
 const menus = ref([]);
+const AllMenu = ref([]);
 const dataArray = ref([]);
 const getData = async () => {
 	// 获取数据
-	const res = await getAllList(param.value);
+	const res = await getPage(param.value);
 	const arr = [];
 	const arr2 = [];
-	if (res.data && res.data.length >= 0) {
-		res.data.forEach(el => {
+	if (res && res.length >= 0) {
+		res.forEach(el => {
 			arr2.push({ value: el.id, label: el.name, id: el.id, parent_id: el.parent_id });
 			if (el.parent_id === '-1') {
 				arr.push({ ...el, parentName: '根目录' });
 			} else {
-				arr.push({ ...el, parentName: res.data.find(e => e.id === el.parent_id)?.name });
+				arr.push({ ...el, parentName: res.find(e => e.id === el.parent_id)?.name });
 			}
 		});
 		// 平面结构
@@ -79,8 +81,10 @@ const getData = async () => {
 		// 树形结构
 		dataArray.value = buildTree(arr, 'id', 'parent_id'); 
 		menus.value = buildTree(arr2, 'id', 'parent_id');
+		AllMenu.value = arr2;
 	}
 	menus.value.push({ value: '-1', label: '根目录' });
+	AllMenu.value.push({ value: '-1', label: '根目录' });
 };
 // 条件搜索
 const handleSearch = (e) => {
@@ -100,12 +104,12 @@ const drawerClick = (row) => {
 const formDialogRef = ref(); // 详情
 // 新增
 const addClick = () => {
-	formDialogRef.value.openDailog(menus.value, '');
+	formDialogRef.value.openDailog(menus.value, '', AllMenu.value);
 };
 // 编辑
 const editClick = (row) => {
 	const formData = cloneDeep(row);
-	formDialogRef.value.openDailog(menus.value, formData);
+	formDialogRef.value.openDailog(menus.value, formData, AllMenu.value);
 };
 // 删除角色
 const deleteClick = (row) => {

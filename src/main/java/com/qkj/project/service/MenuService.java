@@ -2,7 +2,7 @@ package com.qkj.project.service;
 
 import com.qkj.project.common.Page;
 import com.qkj.project.entity.Menu;
-import com.qkj.project.entity.RoleMenu;
+import com.qkj.project.vo.RoleMenuGrantVO;
 
 import java.util.List;
 
@@ -14,46 +14,49 @@ import java.util.List;
 public interface MenuService {
     /**
      * 根据角色id查询所有菜单列表
-     * @param roleId
-     * @return
+     * @param roleId 角色id
+     * @return 菜单列表
      */
     List<Menu> getMenuListByRoleId(String roleId);
 
     /**
      * 添加菜单
-     * @param menu
-     * @return
+     * @param menu 菜单
+     * @return 新建结果
      */
     int addMenu(Menu menu);
 
     /**
-     * 角色授权
-     * @param list
-     * @return
+     * 编辑菜单
+     * @param menu 菜单
+     * @return 编辑结果
      */
-    int addRoleMenu(List<RoleMenu> list);
+    int editMenu(Menu menu);
 
     /**
-     * 查询菜单分页列表
-     * @param name
-     * @param page
-     * @param size
-     * @return
+     * 角色菜单分配
+     * @param menuGrant 角色菜单授权VO
+     * @return 授权结果
      */
-    Page<Menu> getList(String name, int page, int size);
+    int addRoleMenu(RoleMenuGrantVO menuGrant);
+
+    /**
+     * 根据 name 筛选菜单列表
+     * @param name 菜单名称
+     * @return 菜单列表
+     */
+    List<Menu> getListByName(String name);
 
     /**
      * 根据菜单id删除菜单
-     * @param menuId
-     * @return
+     * @param menuId 菜单id
+     * @return 删除结果
      */
     int deleteMenuByMenuId(String menuId);
 
     /**
-     * 根据角色id删除已授权菜单
-     * @param roleId
-     * @return
+     * 查询所有菜单列表
+     * @return 所有菜单
      */
-    Integer deleteRoleMenuByRoleId(String roleId);
-
+    List<Menu> getAll();
 }

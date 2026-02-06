@@ -21,7 +21,7 @@
 <script setup>
 import { ref, defineExpose } from 'vue';
 import { isEmpty } from 'lodash';
-import { day, echartsFit } from '@/utils';
+import { day } from '@/utils';
 
 const isShowForm = ref(false);
 
