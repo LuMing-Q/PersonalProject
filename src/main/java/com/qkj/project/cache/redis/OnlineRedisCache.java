@@ -3,7 +3,7 @@ package com.qkj.project.cache.redis;
 import com.alibaba.fastjson.JSON;
 import com.qkj.project.cache.OnlineCache;
 import com.qkj.project.common.Online;
-import com.qkj.project.common.constant.RedisKey;
+import com.qkj.project.common.constant.Str;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -27,13 +27,13 @@ public class OnlineRedisCache implements OnlineCache {
 
     @Override
     public Online getOnline(String token) {
-        String key = String.format(RedisKey.ONLINE_TOKEN, token);
+        String key = String.format(Str.ONLINE_TOKEN, token);
         return JSON.parseObject((String) redisTemplate.boundValueOps(key).get(), Online.class);
     }
 
     @Override
     public void cacheOnline(String token, Online online) {
-        String key = String.format(RedisKey.ONLINE_TOKEN, token);
+        String key = String.format(Str.ONLINE_TOKEN, token);
         Boolean hasKey = redisTemplate.hasKey(key);
         if (hasKey != null && hasKey) {
             redisTemplate.boundValueOps(key).set(online);
@@ -44,7 +44,7 @@ public class OnlineRedisCache implements OnlineCache {
 
     @Override
     public void delOnline(String token) {
-        String key = String.format(RedisKey.ONLINE_TOKEN, token);
+        String key = String.format(Str.ONLINE_TOKEN, token);
         redisTemplate.delete(key);
     }
 }

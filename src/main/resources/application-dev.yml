@@ -22,10 +22,34 @@ spring:
     username: admin
     password: Admin@123
     virtual-host: /study
+    # 开启 Confirm 确认模式
+    publisher-confirm-type: correlated
+    # 开启 Return 确认模式
+    publisher-returns: true
+    template:
+      # 必须路由，否则回调
+      mandatory: true
+    # 开启消费者重试机制
+    listener:
+      simple:
+        acknowledge-mode: manual
+        # 预取数量
+        prefetch: 1
+
+mq:
+  exchange:
+    option-log: option-log-exchange
+    option-log-dlx: option-log-dlx
+    inform: inform-exchange
+  queue:
+    option-log: option-log-queue
+    option-log-dead: option-log-dead-queue
+    inform-station: inform-station-queue
+    inform-sms: inform-sms-queue
 
 logging:
   level:
-    com.qkj.project: INFO # 返回日志级别
+    com.qkj.project: debug
 
 # 路径拦截
 auth:

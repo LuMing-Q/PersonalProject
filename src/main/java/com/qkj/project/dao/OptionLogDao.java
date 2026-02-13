@@ -15,11 +15,10 @@ import java.util.List;
 public interface OptionLogDao {
     /**
      * 新增/修改日志  --->  第一次新增没有返回结果和，所以使用 ON DUPLICATE 更新状态和操作结果
-     * @param tableName 表名
      * @param log 日志对象
      * @return 影响行数
      */
-    Integer upsert(@Param("tableName") String tableName, @Param("log") OptionLog log);
+    Integer upsert(OptionLog log);
 
     /**
      * 查询符合条件的日志总数
@@ -53,11 +52,11 @@ public interface OptionLogDao {
     List<String> operateOption();
 
     /**
-     * 创建表，如果不存在则创建
-     * @param tableName 表名
+     * 创建表 不存在才创建
+     * @param year 年份
      * @return 创建结果
      */
-    Integer createTableIfNotExists(@Param("tableName") String tableName);
+    Integer createTable(@Param("year") int year);
 
     /**
      * 查询年份

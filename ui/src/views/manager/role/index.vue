@@ -68,8 +68,8 @@ const getData = async () => {
 // 条件搜索
 const handleSearch = (e) => {
 	param.value = {
+		size: param.value.size,
 		page: 1,
-		size: 10,
 		...e
 	};
 	getData();

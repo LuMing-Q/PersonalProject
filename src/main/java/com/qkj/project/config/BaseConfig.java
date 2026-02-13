@@ -17,17 +17,17 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author KeJiang Qi
  * @date 2024/8/20 - 14:57
- * @description 当前线程相关信息
+ * @description 基础配置类
  */
 @Configuration
 @EnableAspectJAutoProxy
@@ -35,7 +35,7 @@ public class BaseConfig {
 
     /**
      * 不能发起 https 请求，可以传输文件
-     * @return
+     * @return RestTemplate
      */
     @Bean("httpRestTemplate")
     public RestTemplate fileRestTemplate() {
@@ -48,8 +48,7 @@ public class BaseConfig {
 
     /**
      * 用于发起 https 请求，不能传输文件
-     * @return
-     * @throws Exception
+     * @return RestTemplate
      */
     @Bean("httpsRestTemplate")
     public RestTemplate restTemplate() throws Exception {
@@ -66,19 +65,31 @@ public class BaseConfig {
         return new RestTemplate(factory);
     }
 
-    /**
-     * 日志生成线程池<br>
-     * <img src="https://pic.imgdb.cn/item/67243c68d29ded1a8ce6fab9.png">
-     * @return
-     */
-    @Bean("logExecutorService")
-    public ExecutorService logExecutorService() {
-        return Executors.newFixedThreadPool(4);
+    @Bean("rabbitExecutor")
+    public ThreadPoolTaskExecutor rabbitExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        // 核心线程数
+        executor.setCorePoolSize(4);
+        // 最大线程数
+        executor.setMaxPoolSize(8);
+        // 队列容量（非常重要，避免 OOM）
+        executor.setQueueCapacity(1000);
+        // 线程空闲时间
+        executor.setKeepAliveSeconds(60);
+        // 线程名前缀（方便排查问题）
+        executor.setThreadNamePrefix("rabbit-");
+        // 拒绝策略（推荐 CallerRunsPolicy）
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 关闭时等待所有任务完成
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(30);
+        // 初始化线程池
+        executor.initialize();
+        return executor;
     }
 
     /**
      * 配置Redis模板，使用自定义序列化器
-     *
      * @param factory Redis连接工厂，用于创建Redis连接
      * @return 配置好的Redis模板实例
      */
@@ -90,7 +101,6 @@ public class BaseConfig {
         RedisSerializer<Object> redisSerializer = new RedisSerializer<Object>() {
             /**
              * 将对象序列化为字节数组
-             *
              * @param t 要序列化的对象
              * @return 序列化后的字节数组
              * @throws SerializationException 序列化异常
@@ -108,7 +118,6 @@ public class BaseConfig {
 
             /**
              * 将字节数组反序列化为字符串
-             *
              * @param bytes 要反序列化的字节数组
              * @return 反序列化后的字符串
              * @throws SerializationException 反序列化异常

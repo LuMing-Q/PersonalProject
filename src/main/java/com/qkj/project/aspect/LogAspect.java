@@ -9,8 +9,8 @@ import com.qkj.project.common.RequestHolder;
 import com.qkj.project.common.Result;
 import com.qkj.project.common.annotations.ULog;
 import com.qkj.project.common.enumerations.StatusCode;
-import com.qkj.project.dao.OptionLogDao;
 import com.qkj.project.entity.OptionLog;
+import com.qkj.project.mq.RabbitProducer;
 import com.qkj.project.utils.BaseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,11 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author KeJiang Qi
@@ -50,11 +47,8 @@ import java.util.stream.Stream;
 @Component
 public class LogAspect {
 
-    @Resource(name = "logExecutorService")
-    private ExecutorService logExecutorService;
-
     @Resource
-    private OptionLogDao optionLogDao;
+    private RabbitProducer rabbitProducer;
 
     @Pointcut("execution(public * com.qkj.project.controller.*.*(..))")
     public void checkUserIdPointcut() {}
@@ -126,62 +120,33 @@ public class LogAspect {
     @Around("checkUserIdPointcut() && @annotation(uLog)")
     public Object action(ProceedingJoinPoint point, ULog uLog) throws Throwable {
         RequestHolder.Value value = RequestHolder.get();
-        OptionLog log = new OptionLog();
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null || value == null || value.getUser() == null
                 || BaseUtil.isEmpty(value.getUser().getId())) {
-            // 继续执行被通知的方法
             return point.proceed();
         }
         HttpServletRequest request = attributes.getRequest();
         String path = request.getRequestURI();
-        Object[] parameters = point.getArgs();
-        log.setId(BaseUtil.uuid());
-        log.setUserId(value.getUser().getId());
-        log.setUserName(value.getUser().getRealName());
-        log.setOperate(uLog.value());
-        log.setStatus(1);
-        log.setRelation(BaseUtil.sha256(value.getToken()));
-        log.setPath(path);
-        log.setParam(JSON.toJSONString(Stream.of(parameters).
-                filter(o -> !isFilterParam(o)).
-                collect(Collectors.toList())));
-        log.setCreateTime(LocalDateTime.now());
-        String tableName = createTable();
-        logExecutorService.execute(() -> optionLogDao.upsert(tableName, log));
+        OptionLog optionLog = buildBaseLog(uLog, value, path);
+        optionLog.setParam(safeSerializeParams(point.getArgs()));
+        Object result;
         try {
-            Object result = point.proceed();
-            if (!(result instanceof Result)) {
-                log.setStatus(2);
-                log.setResult(JSON.toJSONString(Result.ok(result)));
-                return result;
-            }
-            Result<?> r = (Result<?>) result;
-            if (StatusCode.CODE_200.eq(r.getCode())) {
-                log.setStatus(2);
-                log.setResult(JSON.toJSONString(result));
-            } else {
-                log.setStatus(3);
-                log.setWrong(r.getMsg());
-            }
+            result = point.proceed();
+            handleResult(optionLog, result);
             return result;
         } catch (Throwable e) {
-            log.setStatus(3);
-            log.setWrong(null == e.getMessage() ? e.getLocalizedMessage() : e.getMessage());
+            optionLog.setStatus(3);
+            optionLog.setWrong(Optional.ofNullable(e.getMessage())
+                    .orElse(e.getLocalizedMessage()));
             throw e;
         } finally {
-            logExecutorService.execute(() -> optionLogDao.upsert(tableName, log));
+            try {
+                rabbitProducer.sendOptionLog(JSON.toJSONString(optionLog));
+            } catch (Exception e) {
+                log.error("OptionLog send MQ failed", e);
+            }
         }
-    }
-
-    /**
-     * 创建日志消息表
-     * @return 表名
-     */
-    private String createTable() {
-        String tableName = "t_option_log_" + Year.now().getValue();
-        optionLogDao.createTableIfNotExists(tableName);
-        return tableName;
     }
 
     /**
@@ -197,5 +162,63 @@ public class LogAspect {
                 o instanceof InputStream ||
                 o instanceof OutputStream ||
                 o instanceof Exception; // 避免输出堆栈信息
+    }
+
+    /**
+     * 构造日志对象
+     * @param uLog 日志注解
+     * @param value 请求参数
+     * @param path 请求路径
+     * @return OptionLog
+     */
+    private OptionLog buildBaseLog(ULog uLog, RequestHolder.Value value, String path) {
+        OptionLog log = new OptionLog();
+        log.setId(BaseUtil.uuid());
+        log.setUserId(value.getUser().getId());
+        log.setUserName(value.getUser().getRealName());
+        log.setOperate(uLog.value());
+        log.setStatus(1);
+        log.setRelation(BaseUtil.sha256(value.getToken()));
+        log.setPath(path);
+        log.setCreateTime(LocalDateTime.now());
+        return log;
+    }
+
+    /**
+     * 安全序列化参数
+     * @param args 参数数组
+     * @return 序列化后的字符串
+     */
+    private String safeSerializeParams(Object[] args) {
+        try {
+            List<Object> list = Arrays.stream(args)
+                    .filter(this::isFilterParam)
+                    .collect(Collectors.toList());
+
+            return JSON.toJSONString(list);
+        } catch (Exception e) {
+            return "[unserializable params]";
+        }
+    }
+
+    /**
+    * 处理方法返回值，根据返回值设置日志状态和结果
+     * @param log 日志信息
+     * @param result 请求结果
+     */
+    private void handleResult(OptionLog log, Object result) {
+        if (!(result instanceof Result)) {
+            log.setStatus(2);
+            log.setResult(JSON.toJSONString(Result.ok(result)));
+            return;
+        }
+        Result<?> r = (Result<?>) result;
+        if (StatusCode.CODE_200.eq(r.getCode())) {
+            log.setStatus(2);
+        } else {
+            log.setStatus(3);
+            log.setWrong(r.getMsg());
+        }
+        log.setResult(JSON.toJSONString(r));
     }
 }

@@ -1,6 +1,8 @@
 package com.qkj.project.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -27,4 +29,7 @@ public class OptionLog {
     private String wrong;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+    @JsonIgnore
+    @JSONField(serialize = false)
+    private int year;
 }

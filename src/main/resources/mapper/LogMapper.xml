@@ -17,9 +17,8 @@
     </resultMap>
 
     <insert id="upsert" parameterType="com.qkj.project.entity.OptionLog">
-        INSERT INTO ${tableName} (`id`, `user_id`, `user_name`, `operate`, `status`, `relation`, `path`, `param`, `result`, `wrong`, `create_time`)
-        VALUES (#{log.id}, #{log.userId}, #{log.userName}, #{log.operate}, #{log.status}, #{log.relation}, #{log.path}, #{log.param}, #{log.result}, #{log.wrong}, #{log.createTime})
-        ON DUPLICATE KEY UPDATE status = #{log.status}, `result` = #{log.result}, `wrong` = #{log.wrong}
+        INSERT INTO t_option_log_${year} (`id`, `user_id`, `user_name`, `operate`, `status`, `relation`, `path`, `param`, `result`, `wrong`, `create_time`)
+        VALUES (#{id}, #{userId}, #{userName}, #{operate}, #{status}, #{relation}, #{path}, #{param}, #{result}, #{wrong}, #{createTime})
     </insert>
 
     <select id="selectCount" resultType="java.lang.Long">
@@ -46,8 +45,8 @@
         SELECT DISTINCT `operate` from  `t_option_log`
     </select>
 
-    <update id="createTableIfNotExists">
-        CREATE TABLE IF NOT EXISTS  ${tableName} LIKE t_option_log
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS  t_option_log_${year} LIKE `t_option_log`
     </update>
 
     <select id="operateYearOption" resultType="java.lang.String">
