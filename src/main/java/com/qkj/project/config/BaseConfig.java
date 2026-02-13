@@ -1,6 +1,7 @@
 package com.qkj.project.config;
 
 import com.alibaba.fastjson.JSON;
+import com.qkj.project.utils.concurrent.MdcTaskDecorator;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -72,17 +73,19 @@ public class BaseConfig {
         executor.setCorePoolSize(4);
         // 最大线程数
         executor.setMaxPoolSize(8);
-        // 队列容量（非常重要，避免 OOM）
+        // 队列容量
         executor.setQueueCapacity(1000);
         // 线程空闲时间
-        executor.setKeepAliveSeconds(60);
+        executor.setKeepAliveSeconds(30);
         // 线程名前缀（方便排查问题）
-        executor.setThreadNamePrefix("rabbit-");
-        // 拒绝策略（推荐 CallerRunsPolicy）
+        executor.setThreadNamePrefix("rabbit-sender-");
+        // 拒绝策略 使用 CallerRunsPolicy 策略, 当线程池满时，由调用者线程执行任务
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // 关闭时等待所有任务完成
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(30);
+        // 自定义装饰器：添加MDC追踪和异常处理
+        executor.setTaskDecorator(new MdcTaskDecorator());
         // 初始化线程池
         executor.initialize();
         return executor;

@@ -9,28 +9,55 @@ import com.qkj.project.common.exception.BusinessException;
  * @description 基于雪花算法的ID生成器
  */
 public class SnowflakeId {
-    // 起始的时间戳，2022-01-01 00:00:00
+    /**
+     * 起始的时间戳，2022-01-01 00:00:00
+     */
     private static final long twepoch = 1735660800000L;
 
     // 每个部分占用的位数
-    private static final long workerIdBits = 5L; // 机器标识位数
-    private static final long dataCenterIdBits = 5L; // 数据中心标识位数
-    private static final long sequenceBits = 12L; // 序列号位数
+    /**
+     * 机器标识位数
+     */
+    private static final long workerIdBits = 5L;
+    /**
+     * 数据中心标识位数
+     */
+    private static final long dataCenterIdBits = 5L;
+    /**
+     * 序列号位数
+     */
+    private static final long sequenceBits = 12L;
 
-    // 每个部分的最大值
+    /**
+     * 每个部分的最大值
+     */
     private static final long maxWorkerId = ~(-1L << workerIdBits);
     private static final long maxDataCenterId = ~(-1L << dataCenterIdBits);
     private static final long sequenceMask = ~(-1L << sequenceBits);
 
-    // 每个部分向左的位移
+    /**
+     * 序列号向左的位移
+     */
     private static final long workerIdShift = sequenceBits;
     private static final long dataCenterIdShift = sequenceBits + workerIdBits;
     private static final long timestampShift = sequenceBits + workerIdBits + dataCenterIdBits;
 
-    private final long workerId; // 机器ID
-    private final long dataCenterId; // 数据中心ID
-    private long sequence = 0L; // 序列号
-    private long lastTimestamp = -1L; // 上次生成ID的时间戳
+    /**
+     * 机器ID
+     */
+    private final long workerId;
+    /**
+     * 数据中心ID
+     */
+    private final long dataCenterId;
+    /**
+     * 序列号
+     */
+    private long sequence = 0L;
+    /**
+     * 上次生成ID的时间戳
+     */
+    private long lastTimestamp = -1L;
 
     public SnowflakeId(long workerId, long dataCenterId) {
         if (workerId > maxWorkerId || workerId < 0) {

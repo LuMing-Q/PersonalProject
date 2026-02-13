@@ -42,10 +42,7 @@ public class RabbitConsumer {
             OptionLog optionLog = JSON.parseObject(body, OptionLog.class);
             optionLog.setYear(optionLog.getCreateTime().getYear());
             optionLogDao.upsert(optionLog);
-            int row = localMessageDao.markConsumed(msgId);
-            if (row == 0) {
-                return;
-            }
+            localMessageDao.markConsumed(msgId);
             channel.basicAck(tag, false);
         } catch (Exception e) {
             log.error("消费失败: {}", msgId);
@@ -53,7 +50,6 @@ public class RabbitConsumer {
             channel.basicNack(tag, false, false);
         }
     }
-
 
     @RabbitListener(queues = "${mq.queue.inform-station}")
     public void consumeInStationMessage(String body, Channel channel, Message message) throws IOException {
@@ -68,10 +64,7 @@ public class RabbitConsumer {
                 return;
             }
             // todo 处理站内消息
-            int row = localMessageDao.markConsumed(msgId);
-            if (row == 0) {
-                return;
-            }
+            localMessageDao.markConsumed(msgId);
             channel.basicAck(tag, false);
         } catch (Exception e) {
             log.error("站内消息消费失败: {}", msgId);
@@ -93,10 +86,7 @@ public class RabbitConsumer {
                 return;
             }
             // todo 处理站内消息
-            int row = localMessageDao.markConsumed(msgId);
-            if (row == 0) {
-                return;
-            }
+            localMessageDao.markConsumed(msgId);
             channel.basicAck(tag, false);
         } catch (Exception e) {
             log.error("短信消息消费失败: {}", msgId);

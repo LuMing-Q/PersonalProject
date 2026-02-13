@@ -115,7 +115,7 @@ public class SystemInfoUtil {
 
     /**
      * 获取网络接口NetworkIF对象列表
-     * @return
+     * @return 网络接口NetworkIF对象列表
      */
     private static List<NetworkIF> getNetwork() {
         List<NetworkIF> list = new ArrayList<>();
@@ -211,8 +211,7 @@ public class SystemInfoUtil {
 
     /**
      * 获取系统运行信息
-     * @return
-     * @throws InterruptedException
+     * @return 系统运行信息
      */
     public static OSRuntimeInfo getOSRuntimeInfo() {
         OSRuntimeInfo osRuntimeInfo = new OSRuntimeInfo();
@@ -285,7 +284,8 @@ public class SystemInfoUtil {
         CentralProcessor processor = OshiUtil.getHardware().getProcessor();
         long[] prevTicks = processor.getSystemCpuLoadTicks();
         try {
-            TimeUnit.SECONDS.sleep(5); // 睡眠1秒
+            // 等待5秒，获取新的CPU负载
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
